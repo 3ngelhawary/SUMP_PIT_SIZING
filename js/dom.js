@@ -21,7 +21,8 @@ window.DOM = {
   outDiameter: document.getElementById('outDiameter'),
   outLength: document.getElementById('outLength'),
   outWidth: document.getElementById('outWidth'),
-  sketch: document.getElementById('sketch'),
+  sectionSketch: document.getElementById('sectionSketch'),
+  planSketch: document.getElementById('planSketch'),
   calcBtn: document.getElementById('calcBtn'),
   exampleBtn: document.getElementById('exampleBtn'),
   resetBtn: document.getElementById('resetBtn')

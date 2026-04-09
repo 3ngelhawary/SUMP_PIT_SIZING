@@ -41,14 +41,9 @@ function calculateAndRender() {
   Sketch.render(d, r);
 }
 
-function resetBlank() {
-  updateActiveMode();
-  DOM.sketch.innerHTML = '';
-}
-
 DOM.calcBtn.addEventListener('click', calculateAndRender);
 DOM.exampleBtn.addEventListener('click', () => { loadExample(); calculateAndRender(); });
-DOM.resetBtn.addEventListener('click', () => { loadExample(); resetBlank(); calculateAndRender(); });
+DOM.resetBtn.addEventListener('click', () => { loadExample(); calculateAndRender(); });
 document.querySelectorAll('input[name="mode"], input[name="shape"]').forEach(el => el.addEventListener('change', calculateAndRender));
 [DOM.inflow, DOM.duty, DOM.standby, DOM.starts, DOM.rim, DOM.invert, DOM.pipeDia, DOM.freeboard, DOM.axis, DOM.effectiveDepth, DOM.safety].forEach(el => el.addEventListener('input', calculateAndRender));
 
