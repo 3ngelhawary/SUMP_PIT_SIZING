@@ -1,26 +1,62 @@
-
-function calc(){
-let inflow=+document.getElementById('inflow').value;
-let duty=+document.getElementById('duty').value;
-let standby=+document.getElementById('standby').value;
-
-let total=duty+standby;
-document.getElementById('total').value=total;
-
-let pump=inflow/duty;
-document.getElementById('pump').value=pump.toFixed(2);
-
-let Q=pump*duty;
-
-let T=3600/+document.getElementById('starts').value;
-let V=(T*(Q/1000))/4;
-
-document.getElementById('out').innerHTML="Volume = "+V.toFixed(2)+" m3";
-
-draw();
+function updateActiveMode() {
+  const modeText = getSelectedMode() === 'wet' ? 'Wet Well' : 'Dry / Wet Sump';
+  const shapeText = getSelectedShape() === 'circular' ? 'Circular' : 'Rectangular';
+  DOM.activeModeText.textContent = modeText + ' + ' + shapeText;
 }
 
-function draw(){
-let svg=document.getElementById('svg');
-svg.innerHTML='<rect x="80" y="50" width="140" height="180" stroke="cyan" fill="none"/>';
+function loadExample() {
+  DOM.inflow.value = 500;
+  DOM.duty.value = 1;
+  DOM.standby.value = 1;
+  DOM.starts.value = 6;
+  DOM.rim.value = 3.20;
+  DOM.invert.value = 2.60;
+  DOM.pipeDia.value = 400;
+  DOM.freeboard.value = 0.30;
+  DOM.axis.value = 0.80;
+  DOM.effectiveDepth.value = 1.50;
+  DOM.safety.value = 10;
+  document.querySelector('input[name="mode"][value="wet"]').checked = true;
+  document.querySelector('input[name="shape"][value="circular"]').checked = true;
 }
+
+function applyOutputs(d, r) {
+  DOM.totalPumps.value = d.totalPumps;
+  DOM.pumpPer.value = fmt(d.pumpPer);
+  DOM.outVolume.textContent = fmt(r.activeVolume) + ' m³';
+  DOM.outArea.textContent = fmt(r.planArea) + ' m²';
+  DOM.outDepth.textContent = fmt(r.totalDepthRounded) + ' m';
+  DOM.outTotalVol.textContent = fmt(r.totalVolume) + ' m³';
+  DOM.outCycle.textContent = fmt(r.Tsec / 60) + ' min';
+  DOM.outMain.textContent = r.mainText;
+}
+
+function calculateAndRender() {
+  updateActiveMode();
+  const d = Engineering.collect();
+  const r = Engineering.calculate(d);
+  applyOutputs(d, r);
+  Sketch.render(d, r);
+}
+
+function resetBlank() {
+  DOM.totalPumps.value = '';
+  DOM.pumpPer.value = '';
+  DOM.outVolume.textContent = '—';
+  DOM.outArea.textContent = '—';
+  DOM.outDepth.textContent = '—';
+  DOM.outTotalVol.textContent = '—';
+  DOM.outCycle.textContent = '—';
+  DOM.outMain.textContent = '—';
+  DOM.sketch.innerHTML = '';
+  updateActiveMode();
+}
+
+DOM.calcBtn.addEventListener('click', calculateAndRender);
+DOM.exampleBtn.addEventListener('click', () => { loadExample(); calculateAndRender(); });
+DOM.resetBtn.addEventListener('click', () => { loadExample(); resetBlank(); calculateAndRender(); });
+document.querySelectorAll('input[name="mode"], input[name="shape"]').forEach(el => el.addEventListener('change', calculateAndRender));
+[DOM.inflow, DOM.duty, DOM.standby, DOM.starts, DOM.rim, DOM.invert, DOM.pipeDia, DOM.freeboard, DOM.axis, DOM.effectiveDepth, DOM.safety].forEach(el => el.addEventListener('input', calculateAndRender));
+
+loadExample();
+calculateAndRender();

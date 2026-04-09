@@ -1,25 +1,31 @@
-import { inputDefs, rectDefs, resultDefs } from './config.js';
+window.DOM = {
+  inflow: document.getElementById('inflow'),
+  duty: document.getElementById('duty'),
+  standby: document.getElementById('standby'),
+  totalPumps: document.getElementById('totalPumps'),
+  pumpPer: document.getElementById('pumpPer'),
+  starts: document.getElementById('starts'),
+  rim: document.getElementById('rim'),
+  invert: document.getElementById('invert'),
+  pipeDia: document.getElementById('pipeDia'),
+  freeboard: document.getElementById('freeboard'),
+  axis: document.getElementById('axis'),
+  effectiveDepth: document.getElementById('effectiveDepth'),
+  safety: document.getElementById('safety'),
+  activeModeText: document.getElementById('activeModeText'),
+  outVolume: document.getElementById('outVolume'),
+  outArea: document.getElementById('outArea'),
+  outDepth: document.getElementById('outDepth'),
+  outTotalVol: document.getElementById('outTotalVol'),
+  outCycle: document.getElementById('outCycle'),
+  outMain: document.getElementById('outMain'),
+  sketch: document.getElementById('sketch'),
+  calcBtn: document.getElementById('calcBtn'),
+  exampleBtn: document.getElementById('exampleBtn'),
+  resetBtn: document.getElementById('resetBtn')
+};
 
-const makeField = ([id, label, unit, help, ro]) => `
-  <div class="field">
-    <label for="${id}">${label}</label>
-    <div class="input-wrap">
-      <input id="${id}" type="number" step="any" ${ro ? 'readonly' : ''}>
-      <span class="unit">${unit}</span>
-    </div>
-    <div class="help">${help || ''}</div>
-    <div class="error" id="err-${id}"></div>
-  </div>`;
-
-export function buildDom() {
-  inputGrid.innerHTML = inputDefs.map(makeField).join('');
-  rectPanel.innerHTML = rectDefs.map(makeField).join('');
-  resultsGrid.innerHTML = resultDefs.map(([k, t]) => `
-    <div class="result-box"><div class="result-key">${t}</div><div class="result-value" id="res-${k}">—</div></div>`).join('');
-}
-
-export function radios(name) {
-  return [...document.querySelectorAll(`input[name="${name}"]`)];
-}
-
-export const byId = id => document.getElementById(id);
+window.getSelectedMode = () => document.querySelector('input[name="mode"]:checked').value;
+window.getSelectedShape = () => document.querySelector('input[name="shape"]:checked').value;
+window.num = (el) => Number(el.value || 0);
+window.fmt = (n, d = 2) => Number(n).toLocaleString(undefined, {maximumFractionDigits:d, minimumFractionDigits:0});

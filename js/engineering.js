@@ -1,38 +1,65 @@
-import { roundUp025 } from './format.js';
+window.Engineering = {
+  roundUpStep(value, step) {
+    return Math.ceil(value / step) * step;
+  },
 
-function calcRect(area, d) {
-  let L, W;
-  if (d.fixedLength && d.fixedWidth) L = d.fixedLength, W = d.fixedWidth;
-  else if (d.fixedLength) L = d.fixedLength, W = area / L;
-  else if (d.fixedWidth) W = d.fixedWidth, L = area / W;
-  else W = Math.sqrt(area / d.aspect), L = d.aspect * W;
-  return { L: roundUp025(L), W: roundUp025(W) };
-}
+  collect() {
+    const d = {
+      mode: getSelectedMode(),
+      shape: getSelectedShape(),
+      inflow: num(DOM.inflow),
+      duty: Math.max(1, Math.round(num(DOM.duty))),
+      standby: Math.max(0, Math.round(num(DOM.standby))),
+      starts: Math.max(0.1, num(DOM.starts)),
+      rim: num(DOM.rim),
+      invert: num(DOM.invert),
+      pipeDiaMm: num(DOM.pipeDia),
+      freeboard: num(DOM.freeboard),
+      axis: num(DOM.axis),
+      effectiveDepth: num(DOM.effectiveDepth),
+      safety: Math.max(0, num(DOM.safety))
+    };
+    d.totalPumps = d.duty + d.standby;
+    d.pumpPer = d.inflow / d.duty;
+    d.totalPumpFlow = d.pumpPer * d.duty;
+    d.pipeDiaM = d.pipeDiaMm / 1000;
+    d.maxWater = d.invert - d.freeboard;
+    d.totalInnerDepth = d.rim - d.axis;
+    return d;
+  },
 
-export function calculateModel(d) {
-  const warnings = [];
-  const pipeDiaM = d.pipeDia / 1000;
-  const qPump = d.pumpRate;
-  const qTotal = qPump * d.dutyPumps;
-  const maxWaterLevel = d.invertLevel - d.freeboard;
-  const effDepth = maxWaterLevel - d.pumpAxisHeight;
-  const crownLevel = d.invertLevel + pipeDiaM;
-  const totalDepth = d.rimElevation;
-  const tMinSec = 3600 / d.starts;
-  let activeVol = (tMinSec * (qTotal / 1000)) / 4;
-  activeVol *= 1 + d.safety / 100;
-  const rawArea = activeVol / effDepth;
-  let tpSec = NaN;
-  const tfSec = activeVol / (d.inflow / 1000);
-  if (qTotal > d.inflow) tpSec = activeVol / ((qTotal - d.inflow) / 1000);
-  else if (qTotal === d.inflow) warnings.push('Total duty pumping rate equals inflow. No drawdown margin.');
-  else warnings.push('Total duty pumping rate is less than inflow. Drawdown cannot occur.');
-  let rect = null, dia = NaN, areaRounded = rawArea;
-  if (d.shape === 'rect') rect = calcRect(rawArea, d), areaRounded = rect.L * rect.W;
-  else dia = roundUp025(Math.sqrt((4 * rawArea) / Math.PI)), areaRounded = Math.PI * dia * dia / 4;
-  const totalVol = areaRounded * totalDepth;
-  const startsEst = Number.isFinite(tpSec) ? 3600 / (tpSec + tfSec) : NaN;
-  if (d.stationType === 'drywet') warnings.push('Dry/wet sump affects equipment arrangement, not wet-side storage basis.');
-  if (effDepth < 1) warnings.push('Effective depth is shallow. Check controls and pump submergence.');
-  return { qPump, qTotal, activeVol, effDepth, rawArea, areaRounded, totalDepth, totalVol, maxWaterLevel, crownLevel, tMinSec, tpSec, tfSec, startsEst, rect, dia, pipeDiaM, warnings };
-}
+  calculate(d) {
+    const Tsec = 3600 / d.starts;
+    let activeVolume = (Tsec * (d.totalPumpFlow / 1000)) / 4;
+    activeVolume *= 1 + d.safety / 100;
+
+    const planArea = activeVolume / Math.max(0.1, d.effectiveDepth);
+    const totalDepthRounded = this.roundUpStep(Math.max(d.totalInnerDepth, d.effectiveDepth + d.axis + d.freeboard), APP_CONFIG.roundStep);
+
+    let mainText = '—';
+    let rectL = 0, rectW = 0, dia = 0, finalArea = planArea;
+
+    if (d.shape === 'circular') {
+      dia = this.roundUpStep(Math.sqrt((4 * planArea) / Math.PI), APP_CONFIG.roundStep);
+      finalArea = Math.PI * dia * dia / 4;
+      mainText = 'D ' + fmt(dia) + ' m';
+    } else {
+      rectW = this.roundUpStep(Math.sqrt(planArea / 1.5), APP_CONFIG.roundStep);
+      rectL = this.roundUpStep(1.5 * rectW, APP_CONFIG.roundStep);
+      finalArea = rectL * rectW;
+      mainText = 'L ' + fmt(rectL) + ' m × W ' + fmt(rectW) + ' m';
+    }
+
+    return {
+      Tsec,
+      activeVolume,
+      planArea: finalArea,
+      totalDepthRounded,
+      totalVolume: finalArea * totalDepthRounded,
+      rectL,
+      rectW,
+      dia,
+      mainText
+    };
+  }
+};
