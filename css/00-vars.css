@@ -1,22 +1,22 @@
 :root {
-  --bg: #09111f;
-  --panel: rgba(255,255,255,0.08);
-  --panel-2: rgba(255,255,255,0.12);
-  --card: #ffffff;
-  --line: #d7e2ef;
-  --text: #1b2a3b;
-  --muted: #667b92;
-  --blue: #2a78ff;
+  --bg: #08101a;
+  --panel: #121c2a;
+  --panel-2: #182436;
+  --card: #162131;
+  --line: #2d3c55;
+  --text: #e5eefb;
+  --muted: #9ab0ca;
+  --blue: #3d8cff;
   --cyan: #00c2ff;
   --violet: #7a5cff;
   --mint: #15b98a;
   --amber: #ffb648;
-  --red: #d93232;
-  --ok-bg: #ecfbf5;
-  --warn-bg: #fff7e8;
-  --shadow: 0 18px 40px rgba(11, 28, 60, 0.14);
+  --red: #ff6b6b;
+  --ok-bg: #13281d;
+  --warn-bg: #2d2411;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
   --radius: 22px;
   --radius-sm: 14px;
-  --hero-grad: linear-gradient(135deg, #14315d 0%, #1d5fc7 45%, #00aee6 100%);
-  --card-grad: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  --hero-grad: linear-gradient(135deg, #11284d 0%, #174ea6 45%, #0a8cc4 100%);
+  --card-grad: linear-gradient(180deg, #162131 0%, #111a29 100%);
 }

@@ -15,6 +15,7 @@ wireEvents(state);
 
 const data = {
   ...example,
+  numPumps: example.dutyPumps + example.standbyPumps,
   pumpRate: Number((example.inflow / example.dutyPumps).toFixed(3))
 };
 const model = calculateModel(data);

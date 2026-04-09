@@ -5,9 +5,9 @@ body {
   font-family: Inter, Segoe UI, Arial, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at 15% 20%, rgba(0,194,255,.18), transparent 20%),
-    radial-gradient(circle at 80% 0%, rgba(122,92,255,.16), transparent 20%),
-    linear-gradient(180deg, #eef5ff 0%, #f8fbff 100%);
+    radial-gradient(circle at 12% 18%, rgba(0,194,255,.13), transparent 20%),
+    radial-gradient(circle at 88% 0%, rgba(122,92,255,.16), transparent 18%),
+    linear-gradient(180deg, #0a1220 0%, #09111b 100%);
 }
 h1,h2,h3,p { margin-top: 0; }
 button, input { font: inherit; }

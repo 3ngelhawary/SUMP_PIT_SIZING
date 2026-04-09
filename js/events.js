@@ -7,8 +7,9 @@ import { resultText } from './format.js';
 import { example } from './config.js';
 
 export function wireEvents(state) {
-  ['inflow', 'dutyPumps'].forEach(id => document.getElementById(id).addEventListener('input', autoPumpRate));
-  document.querySelectorAll('input[name="shape"]').forEach(r => r.addEventListener('change', toggleRectPanel));
+  ['inflow', 'dutyPumps', 'standbyPumps'].forEach(id => document.getElementById(id).addEventListener('input', autoPumpRate));
+  document.querySelectorAll('input[name="shape"]').forEach(r => r.addEventListener('change', () => { toggleRectPanel(); runCalc(state); }));
+  document.querySelectorAll('input[name="stationType"]').forEach(r => r.addEventListener('change', () => runCalc(state)));
   calcBtn.addEventListener('click', () => runCalc(state));
   exampleBtn.addEventListener('click', () => { setValues(example); autoPumpRate(); toggleRectPanel(); runCalc(state); });
   resetBtn.addEventListener('click', () => resetAll());
@@ -21,9 +22,8 @@ function toggleRectPanel() {
 }
 
 function resetAll() {
-  document.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
-  document.querySelector('input[name="stationType"][value="wet"]').checked = true;
-  document.querySelector('input[name="shape"][value="rect"]').checked = true;
+  setValues(example);
+  autoPumpRate();
   clearErrors();
   resetRender();
   toggleRectPanel();
