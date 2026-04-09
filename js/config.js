@@ -6,10 +6,11 @@ export const inputDefs = [
   ['pumpRate','Pump discharge rate per pump','L/s','Auto = inflow / duty pumps.', true],
   ['starts','Desired maximum starts per hour','starts/hr','Used for Tmin = 3600 / starts/hr.'],
   ['safety','Safety factor','%','Applied to active storage volume.'],
-  ['pumpAxisHeight','Pump axis height','m','Low water level. Default 0.8 m.'],
-  ['invertLevel','Inlet pipe invert level','m','Measured from sump bottom.'],
-  ['pipeDia','Inlet pipe diameter','m','Affects total depth.'],
-  ['freeboard','Freeboard','m','Difference between invert and max water level. Default 0.3 m.']
+  ['pumpAxisHeight','Pump axis height','m','Low water level above sump bottom. Default 0.8 m.'],
+  ['invertLevel','Inlet pipe invert level','m','Elevation above sump bottom datum.'],
+  ['pipeDia','Inlet pipe diameter','mm','Pipe diameter in millimetres.'],
+  ['freeboard','Freeboard','m','Difference between inlet invert and max water level. Default 0.3 m.'],
+  ['rimElevation','Sump rim elevation','m','Top inside level above sump bottom datum.']
 ];
 
 export const rectDefs = [
@@ -27,6 +28,7 @@ export const resultDefs = [
   ['totalVol','Total wet well volume'],
   ['depth','Total internal depth'],
   ['maxLevel','Maximum water level'],
+  ['crownLevel','Pipe crown level'],
   ['tmin','Minimum cycle time'],
   ['tp','Pump-down time'],
   ['tf','Filling time'],
@@ -45,8 +47,9 @@ export const example = {
   safety: 10,
   pumpAxisHeight: 0.8,
   invertLevel: 2.6,
-  pipeDia: 0.4,
+  pipeDia: 400,
   freeboard: 0.3,
+  rimElevation: 3.2,
   fixedLength: '',
   fixedWidth: '',
   aspect: 1.5,

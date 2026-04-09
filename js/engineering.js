@@ -11,11 +11,13 @@ function calcRect(area, d) {
 
 export function calculateModel(d) {
   const warnings = [];
+  const pipeDiaM = d.pipeDia / 1000;
   const qPump = d.pumpRate;
   const qTotal = qPump * d.dutyPumps;
   const maxWaterLevel = d.invertLevel - d.freeboard;
   const effDepth = maxWaterLevel - d.pumpAxisHeight;
-  const totalDepth = roundUp025(d.invertLevel + d.pipeDia);
+  const crownLevel = d.invertLevel + pipeDiaM;
+  const totalDepth = d.rimElevation;
   const tMinSec = 3600 / d.starts;
   let activeVol = (tMinSec * (qTotal / 1000)) / 4;
   activeVol *= 1 + d.safety / 100;
@@ -32,5 +34,5 @@ export function calculateModel(d) {
   const startsEst = Number.isFinite(tpSec) ? 3600 / (tpSec + tfSec) : NaN;
   if (d.stationType === 'drywet') warnings.push('Dry/wet sump affects equipment arrangement, not wet-side storage basis.');
   if (effDepth < 1) warnings.push('Effective depth is shallow. Check controls and pump submergence.');
-  return { qPump, qTotal, activeVol, effDepth, rawArea, areaRounded, totalDepth, totalVol, maxWaterLevel, tMinSec, tpSec, tfSec, startsEst, rect, dia, warnings };
+  return { qPump, qTotal, activeVol, effDepth, rawArea, areaRounded, totalDepth, totalVol, maxWaterLevel, crownLevel, tMinSec, tpSec, tfSec, startsEst, rect, dia, pipeDiaM, warnings };
 }

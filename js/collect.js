@@ -6,7 +6,8 @@ export function getData() {
   return {
     dutyPumps: val('dutyPumps'), standbyPumps: val('standbyPumps'), numPumps: val('numPumps'),
     inflow: val('inflow'), pumpRate: val('pumpRate'), starts: val('starts'), safety: val('safety') ?? 0,
-    pumpAxisHeight: val('pumpAxisHeight'), invertLevel: val('invertLevel'), pipeDia: val('pipeDia'), freeboard: val('freeboard'),
+    pumpAxisHeight: val('pumpAxisHeight'), invertLevel: val('invertLevel'), pipeDia: val('pipeDia'),
+    freeboard: val('freeboard'), rimElevation: val('rimElevation'),
     fixedLength: val('fixedLength'), fixedWidth: val('fixedWidth'), aspect: val('aspect'),
     stationType: document.querySelector('input[name="stationType"]:checked').value,
     shape: document.querySelector('input[name="shape"]:checked').value

@@ -1,13 +1,10 @@
 .sketch-box { padding: 12px; background: linear-gradient(180deg, #121c2a, #0d1521); }
 .sketch-box h3 { margin-bottom: 10px; color: #c9dcff; }
 #sectionSketch, #topSketch { min-height: 250px; }
-.sk-label { font-size: 13px; fill: #b2c4dc; }
-.sk-title { font-size: 18px; fill: #d3e2fb; font-weight: 700; }
 .sk-wall { fill: #7f8c9d; stroke: #cdd7e3; stroke-width: 2; }
 .sk-inner { fill: #0f1826; stroke: #7db6ff; stroke-width: 2; }
 .sk-water { fill: #397fd7; opacity: .88; }
 .sk-dead { fill: #5c6775; }
-.sk-free { fill: #8f6a2a; opacity: .88; }
 .sk-pipe { fill: #b56d35; stroke: #e7b482; stroke-width: 2; }
 .sk-line { stroke: #93acc9; stroke-width: 2; }
-.sk-dim { font-size: 14px; fill: #d8e6ff; font-weight: 600; }
+.sk-soft { opacity: .65; stroke-dasharray: 6 6; }

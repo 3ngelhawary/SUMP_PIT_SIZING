@@ -17,11 +17,11 @@
       <div>
         <span class="badge">Pump Station Calculator</span>
         <h1>Pump Station Sizing Pro</h1>
-        <p>Three-column preliminary sizing app for wet wells and dry-wet sumps with realistic live sketches and inlet-controlled levels.</p>
+        <p>Three-column preliminary sizing app for wet wells and dry-wet sumps with realistic live sketches, rim-controlled depth, and inlet-controlled operating levels.</p>
       </div>
       <div class="hero-metric">
-        <div class="metric-label">Default Mode</div>
-        <div class="metric-value">Wet Well + Circular</div>
+        <div class="metric-label">Active Mode</div>
+        <div class="metric-value" id="activeModeValue">Wet Well + Circular</div>
       </div>
     </header>
 
@@ -62,15 +62,16 @@
             <li>Pump discharge per pump = inflow ÷ duty pumps.</li>
             <li>Low water level = pump axis height.</li>
             <li>Maximum water level = inlet invert level − freeboard.</li>
-            <li>Total depth = inlet invert level + inlet pipe diameter.</li>
+            <li>Total internal depth = sump rim elevation.</li>
+            <li>Inlet diameter is entered in mm and converted internally to metres.</li>
           </ul>
         </article>
       </section>
 
       <section class="col stack-col">
         <article class="card">
-          <h2>Shape & Sketch</h2>
-          <div class="switch-stack">
+          <h2>Shape</h2>
+          <div class="switch-stack first-line">
             <label class="chip"><input type="radio" name="shape" value="circ" checked> Circular</label>
             <label class="chip"><input type="radio" name="shape" value="rect"> Rectangular</label>
           </div>

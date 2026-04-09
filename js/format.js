@@ -15,13 +15,15 @@ export function resultText(state) {
     `Effective storage depth: ${r.effDepth}`,
     `Required plan area: ${r.area}`,
     `Total wet well volume: ${r.totalVol}`,
-    `Total depth: ${r.depth}`,
+    `Total internal depth: ${r.depth}`,
     `Maximum water level: ${r.maxLevel}`,
+    `Pipe crown level: ${r.crownLevel}`,
     `Minimum cycle time: ${r.tmin}`,
     `Pump-down time: ${r.tp}`,
     `Filling time: ${r.tf}`,
     `Estimated starts/hr: ${r.startsEst}`,
     `Rectangular size: ${r.rect}`,
     `Circular diameter: ${r.dia}`
-  ].join('\n');
+  ].join('
+');
 }
