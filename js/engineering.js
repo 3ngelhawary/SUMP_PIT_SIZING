@@ -33,21 +33,18 @@ window.Engineering = {
     let activeVolume = (Tsec * (d.totalPumpFlow / 1000)) / 4;
     activeVolume *= 1 + d.safety / 100;
 
-    const planArea = activeVolume / Math.max(0.1, d.effectiveDepth);
+    const rawArea = activeVolume / Math.max(0.1, d.effectiveDepth);
     const totalDepthRounded = this.roundUpStep(Math.max(d.totalInnerDepth, d.effectiveDepth + d.axis + d.freeboard), APP_CONFIG.roundStep);
 
-    let mainText = '—';
-    let rectL = 0, rectW = 0, dia = 0, finalArea = planArea;
+    let rectL = 0, rectW = 0, dia = 0, finalArea = rawArea;
 
     if (d.shape === 'circular') {
-      dia = this.roundUpStep(Math.sqrt((4 * planArea) / Math.PI), APP_CONFIG.roundStep);
+      dia = this.roundUpStep(Math.sqrt((4 * rawArea) / Math.PI), APP_CONFIG.roundStep);
       finalArea = Math.PI * dia * dia / 4;
-      mainText = 'D ' + fmt(dia) + ' m';
     } else {
-      rectW = this.roundUpStep(Math.sqrt(planArea / 1.5), APP_CONFIG.roundStep);
+      rectW = this.roundUpStep(Math.sqrt(rawArea / 1.5), APP_CONFIG.roundStep);
       rectL = this.roundUpStep(1.5 * rectW, APP_CONFIG.roundStep);
       finalArea = rectL * rectW;
-      mainText = 'L ' + fmt(rectL) + ' m × W ' + fmt(rectW) + ' m';
     }
 
     return {
@@ -58,8 +55,7 @@ window.Engineering = {
       totalVolume: finalArea * totalDepthRounded,
       rectL,
       rectW,
-      dia,
-      mainText
+      dia
     };
   }
 };

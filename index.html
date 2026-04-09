@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pump Station Sizing</title>
+  <title>Sump Pit Sizing</title>
   <link rel="stylesheet" href="css/00-vars.css" />
   <link rel="stylesheet" href="css/01-base.css" />
   <link rel="stylesheet" href="css/02-layout.css" />
@@ -13,11 +13,11 @@
 <body>
   <header class="hero">
     <div class="hero__inner">
-      <div>
-        <div class="eyebrow">Pump Station / Sump Sizing</div>
-        <h1>Active Mode: <span id="activeModeText">Wet Well + Circular</span></h1>
-        <p>Three-column layout with dynamic sketch and stable direct-file loading.</p>
+      <div class="hero__titleBlock">
+        <div class="eyebrow">Pump Station / Sump</div>
+        <h1>Sump Pit Sizing</h1>
       </div>
+      <div class="mode-chip" id="activeModeText">Wet Well + Circular</div>
     </div>
   </header>
 
@@ -31,64 +31,25 @@
 
       <h2 class="section-gap">Inputs</h2>
       <div class="form-grid">
-        <label class="field">
-          <span>Inflow</span>
-          <div class="input-row"><input id="inflow" type="number" value="500" step="any"><em>L/s</em></div>
-        </label>
-        <label class="field">
-          <span>Duty Pumps</span>
-          <div class="input-row"><input id="duty" type="number" value="1" step="1" min="1"><em>No.</em></div>
-        </label>
-        <label class="field">
-          <span>Standby Pumps</span>
-          <div class="input-row"><input id="standby" type="number" value="1" step="1" min="0"><em>No.</em></div>
-        </label>
-        <label class="field">
-          <span>Total Pumps Installed</span>
-          <div class="input-row"><input id="totalPumps" type="number" readonly><em>Auto</em></div>
-        </label>
-        <label class="field">
-          <span>Pump Discharge per Pump</span>
-          <div class="input-row"><input id="pumpPer" type="number" readonly><em>L/s</em></div>
-        </label>
-        <label class="field">
-          <span>Starts per Hour</span>
-          <div class="input-row"><input id="starts" type="number" value="6" step="any" min="0.1"><em>1/hr</em></div>
-        </label>
+        <label class="field"><span>Inflow</span><div class="input-row"><input id="inflow" type="number" value="500" step="any"><em>L/s</em></div></label>
+        <label class="field"><span>Duty Pumps</span><div class="input-row"><input id="duty" type="number" value="1" step="1" min="1"><em>No.</em></div></label>
+        <label class="field"><span>Standby Pumps</span><div class="input-row"><input id="standby" type="number" value="1" step="1" min="0"><em>No.</em></div></label>
+        <label class="field"><span>Total Pumps Installed</span><div class="input-row"><input id="totalPumps" type="number" readonly><em>Auto</em></div></label>
+        <label class="field"><span>Pump Discharge per Pump</span><div class="input-row"><input id="pumpPer" type="number" readonly><em>L/s</em></div></label>
+        <label class="field"><span>Starts per Hour</span><div class="input-row"><input id="starts" type="number" value="6" step="any" min="0.1"><em>1/hr</em></div></label>
       </div>
     </section>
 
     <section class="card">
       <h2>Levels</h2>
       <div class="form-grid">
-        <label class="field">
-          <span>Sump Rim Elevation</span>
-          <div class="input-row"><input id="rim" type="number" value="3.20" step="any"><em>m</em></div>
-        </label>
-        <label class="field">
-          <span>Pipe Invert Level</span>
-          <div class="input-row"><input id="invert" type="number" value="2.60" step="any"><em>m</em></div>
-        </label>
-        <label class="field">
-          <span>Inlet Pipe Dia</span>
-          <div class="input-row"><input id="pipeDia" type="number" value="400" step="any"><em>mm</em></div>
-        </label>
-        <label class="field">
-          <span>Freeboard</span>
-          <div class="input-row"><input id="freeboard" type="number" value="0.30" step="any"><em>m</em></div>
-        </label>
-        <label class="field">
-          <span>Pump Axis Height</span>
-          <div class="input-row"><input id="axis" type="number" value="0.80" step="any"><em>m</em></div>
-        </label>
-        <label class="field">
-          <span>Effective Depth</span>
-          <div class="input-row"><input id="effectiveDepth" type="number" value="1.50" step="any"><em>m</em></div>
-        </label>
-        <label class="field">
-          <span>Safety Factor</span>
-          <div class="input-row"><input id="safety" type="number" value="10" step="any"><em>%</em></div>
-        </label>
+        <label class="field"><span>Sump Rim Elevation</span><div class="input-row"><input id="rim" type="number" value="3.20" step="any"><em>m</em></div></label>
+        <label class="field"><span>Pipe Invert Level</span><div class="input-row"><input id="invert" type="number" value="2.60" step="any"><em>m</em></div></label>
+        <label class="field"><span>Inlet Pipe Dia</span><div class="input-row"><input id="pipeDia" type="number" value="400" step="any"><em>mm</em></div></label>
+        <label class="field"><span>Freeboard</span><div class="input-row"><input id="freeboard" type="number" value="0.30" step="any"><em>m</em></div></label>
+        <label class="field"><span>Pump Axis Height</span><div class="input-row"><input id="axis" type="number" value="0.80" step="any"><em>m</em></div></label>
+        <label class="field"><span>Effective Depth</span><div class="input-row"><input id="effectiveDepth" type="number" value="1.50" step="any"><em>m</em></div></label>
+        <label class="field"><span>Safety Factor</span><div class="input-row"><input id="safety" type="number" value="10" step="any"><em>%</em></div></label>
       </div>
 
       <div class="actions">
@@ -104,7 +65,9 @@
         <div class="metric"><span>Total Inner Depth</span><strong id="outDepth">—</strong></div>
         <div class="metric"><span>Total Inner Volume</span><strong id="outTotalVol">—</strong></div>
         <div class="metric"><span>Cycle Time</span><strong id="outCycle">—</strong></div>
-        <div class="metric"><span>Main Size</span><strong id="outMain">—</strong></div>
+        <div class="metric"><span>Diameter</span><strong id="outDiameter">—</strong></div>
+        <div class="metric"><span>Length</span><strong id="outLength">—</strong></div>
+        <div class="metric"><span>Width</span><strong id="outWidth">—</strong></div>
       </div>
     </section>
 

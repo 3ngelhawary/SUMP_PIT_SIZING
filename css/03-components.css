@@ -3,10 +3,7 @@ h2{
   font-size:1.18rem;
   margin-bottom:8px;
 }
-.option-list{
-  display:grid;
-  gap:10px;
-}
+.option-list{display:grid;gap:10px}
 .choice{
   display:flex;
   align-items:center;
@@ -17,10 +14,7 @@ h2{
   background:#102032;
 }
 .choice input{accent-color:var(--accent);transform:scale(1.05)}
-.form-grid{
-  display:grid;
-  gap:12px;
-}
+.form-grid{display:grid;gap:12px}
 .field span{
   display:block;
   margin-bottom:6px;

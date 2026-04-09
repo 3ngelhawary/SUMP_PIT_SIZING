@@ -28,7 +28,9 @@ function applyOutputs(d, r) {
   DOM.outDepth.textContent = fmt(r.totalDepthRounded) + ' m';
   DOM.outTotalVol.textContent = fmt(r.totalVolume) + ' m³';
   DOM.outCycle.textContent = fmt(r.Tsec / 60) + ' min';
-  DOM.outMain.textContent = r.mainText;
+  DOM.outDiameter.textContent = r.dia > 0 ? fmt(r.dia) + ' m' : '—';
+  DOM.outLength.textContent = r.rectL > 0 ? fmt(r.rectL) + ' m' : '—';
+  DOM.outWidth.textContent = r.rectW > 0 ? fmt(r.rectW) + ' m' : '—';
 }
 
 function calculateAndRender() {
@@ -40,16 +42,8 @@ function calculateAndRender() {
 }
 
 function resetBlank() {
-  DOM.totalPumps.value = '';
-  DOM.pumpPer.value = '';
-  DOM.outVolume.textContent = '—';
-  DOM.outArea.textContent = '—';
-  DOM.outDepth.textContent = '—';
-  DOM.outTotalVol.textContent = '—';
-  DOM.outCycle.textContent = '—';
-  DOM.outMain.textContent = '—';
-  DOM.sketch.innerHTML = '';
   updateActiveMode();
+  DOM.sketch.innerHTML = '';
 }
 
 DOM.calcBtn.addEventListener('click', calculateAndRender);
