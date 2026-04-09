@@ -4,78 +4,671 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wastewater Pump Station Sizing</title>
-  <meta name="description" content="Responsive calculator for wastewater pump station and sump pit sizing." />
-  <link rel="stylesheet" href="css/00-vars.css" />
-  <link rel="stylesheet" href="css/01-base.css" />
-  <link rel="stylesheet" href="css/02-layout.css" />
-  <link rel="stylesheet" href="css/03-components.css" />
-  <link rel="stylesheet" href="css/04-print.css" />
+  <style>
+    :root{
+      --bg:#eef4fb;
+      --card:#ffffff;
+      --line:#d8e2ee;
+      --text:#1e2b3a;
+      --muted:#66788a;
+      --blue:#1f5fae;
+      --blue2:#2f7ed8;
+      --good:#1d7f46;
+      --warn:#a86a00;
+      --bad:#b42318;
+      --soft:#f7fbff;
+      --shadow:0 12px 30px rgba(20,50,90,.08);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Segoe UI,Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#edf4fb 0%,#f8fbff 100%);
+    }
+    .wrap{
+      width:min(1200px,calc(100% - 24px));
+      margin:18px auto 30px;
+    }
+    .hero{
+      background:linear-gradient(135deg,var(--blue),var(--blue2));
+      color:#fff;
+      border-radius:24px;
+      padding:24px;
+      box-shadow:var(--shadow);
+      margin-bottom:18px;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(1.5rem,3vw,2.3rem)}
+    .hero p{margin:0;line-height:1.6;color:rgba(255,255,255,.92)}
+    .layout{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:18px;
+    }
+    .stack{display:grid;gap:18px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{
+      margin:0 0 14px;
+      font-size:1.12rem;
+      color:var(--blue);
+    }
+    .grid2,.grid3{
+      display:grid;
+      gap:14px;
+    }
+    .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field label{font-weight:700;font-size:.95rem}
+    .input-wrap{position:relative}
+    .input-wrap input,.input-wrap select{
+      width:100%;
+      height:46px;
+      border:1px solid #cdd9e6;
+      border-radius:14px;
+      padding:10px 72px 10px 12px;
+      font-size:1rem;
+      outline:none;
+      background:#fff;
+    }
+    .input-wrap input:focus,.input-wrap select:focus{
+      border-color:#7aa7de;
+      box-shadow:0 0 0 3px rgba(47,126,216,.12);
+    }
+    .unit{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:.82rem;
+      color:#6e8297;
+      background:#eef5fc;
+      border:1px solid #d8e6f3;
+      padding:3px 8px;
+      border-radius:999px;
+      pointer-events:none;
+    }
+    .hint{font-size:.83rem;color:var(--muted);line-height:1.45}
+    .err{font-size:.8rem;color:var(--bad);min-height:14px}
+    .radio-row,.check-row,.btns{display:flex;flex-wrap:wrap;gap:10px}
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fbff;
+      cursor:pointer;
+      user-select:none;
+    }
+    button{
+      border:none;
+      border-radius:12px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s;
+    }
+    .b1{background:var(--blue);color:#fff}
+    .b1:hover{background:#184b87}
+    .b2{background:#e8f1fb;color:#184b87}
+    .b2:hover{background:#dbeaf9}
+    .b3{background:#f7f9fc;color:#203040;border:1px solid var(--line)}
+    .b3:hover{background:#eef3f8}
+    .result-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .box{
+      background:linear-gradient(180deg,#fcfeff,#f3f8fe);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+    }
+    .box .k{font-size:.84rem;color:var(--muted);margin-bottom:6px}
+    .box .v{font-size:1.18rem;font-weight:800;color:#173d73}
+    .state{
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:700;
+    }
+    .ok{background:#eef9f2;border:1px solid #cfe9d7;color:var(--good)}
+    .warn{background:#fff8e9;border:1px solid #efd59f;color:var(--warn)}
+    .list{margin:10px 0 0;padding-left:18px;line-height:1.7}
+    .summary{
+      margin-top:14px;
+      background:linear-gradient(180deg,#f7fbff,#eef5fe);
+      border:1px solid #d7e5f5;
+      border-radius:14px;
+      padding:14px;
+    }
+    .summary ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+    .summary li{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px dashed #d6e3f0;
+      padding-bottom:8px;
+    }
+    .summary li:last-child{border-bottom:none;padding-bottom:0}
+    .hidden{display:none}
+    footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:.9rem;
+      margin-top:18px;
+    }
+    @media(max-width:980px){
+      .layout,.grid2,.grid3,.result-grid{grid-template-columns:1fr}
+      .summary li{flex-direction:column}
+    }
+  </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero__overlay"></div>
-    <div class="hero__content shell">
-      <p class="eyebrow">Wastewater Engineering Tool</p>
-      <h1>Wet Well / Dry-Wet Sump Preliminary Sizing</h1>
-      <p class="hero__text">
-        Calculates active storage, plan area, dimensions, cycle timing, and checks using duty pumps only.
-      </p>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Wastewater Pump Station / Sump Pit Sizing</h1>
+      <p>Automatic pump rate per pump = incoming flow / duty pumps. SI units only. Preliminary sizing for rectangular or circular wet well, with wet well or dry/wet sump configuration.</p>
     </div>
-  </header>
-  <main class="shell app-grid">
-    <section class="column column--left">
-      <section class="card">
-        <div class="card__head"><h2>Project Inputs</h2></div>
-        <div id="inputsHost" class="fields-grid"></div>
-        <div class="actions no-print">
-          <button id="calculateBtn" class="btn btn--primary" type="button">Calculate</button>
-          <button id="exampleBtn" class="btn btn--secondary" type="button">Load Example</button>
-          <button id="resetBtn" class="btn btn--ghost" type="button">Reset</button>
+
+    <div class="layout">
+      <div class="stack">
+        <div class="card">
+          <h2>Project Inputs</h2>
+          <div class="grid2">
+            <div class="field">
+              <label for="inflow">Inflow rate to wet well</label>
+              <div class="input-wrap">
+                <input id="inflow" type="number" step="any" min="0">
+                <span class="unit">L/s</span>
+              </div>
+              <div class="hint">Incoming flow entering the wet well.</div>
+              <div class="err" id="err-inflow"></div>
+            </div>
+
+            <div class="field">
+              <label for="pumpRate">Pump discharge rate per pump</label>
+              <div class="input-wrap">
+                <input id="pumpRate" type="number" step="any" readonly>
+                <span class="unit">L/s</span>
+              </div>
+              <div class="hint">Auto = inflow / duty pumps.</div>
+              <div class="err" id="err-pumpRate"></div>
+            </div>
+
+            <div class="field">
+              <label for="numPumps">Number of pumps installed</label>
+              <div class="input-wrap">
+                <input id="numPumps" type="number" step="1" min="1">
+                <span class="unit">No.</span>
+              </div>
+              <div class="hint">Total pumps physically available.</div>
+              <div class="err" id="err-numPumps"></div>
+            </div>
+
+            <div class="field">
+              <label for="dutyPumps">Duty pumps operating at a time</label>
+              <div class="input-wrap">
+                <input id="dutyPumps" type="number" step="1" min="1">
+                <span class="unit">No.</span>
+              </div>
+              <div class="hint">Used for auto pump-rate calculation.</div>
+              <div class="err" id="err-dutyPumps"></div>
+            </div>
+
+            <div class="field">
+              <label for="starts">Desired maximum starts per hour</label>
+              <div class="input-wrap">
+                <input id="starts" type="number" step="any" min="0.1">
+                <span class="unit">starts/hr</span>
+              </div>
+              <div class="hint">Used in Tmin = 3600 / starts per hour.</div>
+              <div class="err" id="err-starts"></div>
+            </div>
+
+            <div class="field">
+              <label for="safety">Safety factor</label>
+              <div class="input-wrap">
+                <input id="safety" type="number" step="any" min="0">
+                <span class="unit">%</span>
+              </div>
+              <div class="hint">Applied to minimum active volume.</div>
+              <div class="err" id="err-safety"></div>
+            </div>
+          </div>
+
+          <div class="grid3" style="margin-top:14px;">
+            <div class="field">
+              <label for="effDepth">Effective depth (ON to OFF)</label>
+              <div class="input-wrap">
+                <input id="effDepth" type="number" step="any" min="0">
+                <span class="unit">m</span>
+              </div>
+              <div class="err" id="err-effDepth"></div>
+            </div>
+
+            <div class="field">
+              <label for="deadDepth">Dead storage depth</label>
+              <div class="input-wrap">
+                <input id="deadDepth" type="number" step="any" min="0">
+                <span class="unit">m</span>
+              </div>
+              <div class="err" id="err-deadDepth"></div>
+            </div>
+
+            <div class="field">
+              <label for="freeboard">Freeboard depth</label>
+              <div class="input-wrap">
+                <input id="freeboard" type="number" step="any" min="0">
+                <span class="unit">m</span>
+              </div>
+              <div class="err" id="err-freeboard"></div>
+            </div>
+          </div>
         </div>
-      </section>
-      <section class="card">
-        <div class="card__head"><h2>Configuration</h2></div>
-        <div id="configHost"></div>
-      </section>
-      <section class="card">
-        <div class="card__head"><h2>Assumptions / Warnings</h2></div>
-        <div id="statusBox" class="status status--ok">Example loaded. Ready for calculation.</div>
-        <ul id="warningList" class="note-list"></ul>
-        <ul class="assumption-list">
-          <li>SI units only in this version.</li>
-          <li>Total pumping rate = pump rate per pump × duty pumps.</li>
-          <li>Q = total duty pumping rate for preliminary active-volume rule.</li>
-          <li>Dynamic pump-down time uses Q − Qin when Q &gt; Qin.</li>
-          <li>Dry/wet sump option changes labels and notes only, not core storage equations.</li>
-        </ul>
-      </section>
-    </section>
-    <section class="column column--right">
-      <section id="printArea" class="card">
-        <div class="card__head"><h2>Calculation Results</h2></div>
-        <div id="resultsGrid" class="results-grid"></div>
-        <div class="summary-box">
-          <h3>Compact Summary</h3>
-          <div id="summaryHost" class="summary-list"></div>
+
+        <div class="card">
+          <h2>Configuration</h2>
+          <div class="radio-row">
+            <label class="pill"><input type="radio" name="stationType" value="wet" checked> Wet well (submersible pumps)</label>
+            <label class="pill"><input type="radio" name="stationType" value="drywet"> Dry/wet sump (dry pumps)</label>
+          </div>
+
+          <div class="radio-row" style="margin-top:12px;">
+            <label class="pill"><input type="radio" name="shape" value="rect" checked> Rectangular</label>
+            <label class="pill"><input type="radio" name="shape" value="circ"> Circular</label>
+          </div>
+
+          <div id="rectPanel" style="margin-top:14px;">
+            <div class="grid3">
+              <div class="field">
+                <label for="fixedLength">Optional fixed length</label>
+                <div class="input-wrap">
+                  <input id="fixedLength" type="number" step="any" min="0">
+                  <span class="unit">m</span>
+                </div>
+                <div class="err" id="err-fixedLength"></div>
+              </div>
+
+              <div class="field">
+                <label for="fixedWidth">Optional fixed width</label>
+                <div class="input-wrap">
+                  <input id="fixedWidth" type="number" step="any" min="0">
+                  <span class="unit">m</span>
+                </div>
+                <div class="err" id="err-fixedWidth"></div>
+              </div>
+
+              <div class="field">
+                <label for="aspect">Economical aspect ratio L/W</label>
+                <div class="input-wrap">
+                  <input id="aspect" type="number" step="any" min="0.1">
+                  <span class="unit">L/W</span>
+                </div>
+                <div class="err" id="err-aspect"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="circPanel" class="hidden" style="margin-top:14px;">
+            <div class="hint">Circular diameter is calculated automatically from required plan area.</div>
+          </div>
+
+          <div class="btns" style="margin-top:14px;">
+            <button class="b1" id="calcBtn" type="button">Calculate</button>
+            <button class="b2" id="exampleBtn" type="button">Load Example</button>
+            <button class="b3" id="resetBtn" type="button">Reset</button>
+            <button class="b3" id="copyBtn" type="button">Copy Results</button>
+            <button class="b3" id="printBtn" type="button">Print</button>
+          </div>
         </div>
-        <div class="actions no-print">
-          <button id="copyBtn" class="btn btn--secondary" type="button">Copy Results</button>
-          <button id="printBtn" class="btn btn--ghost" type="button">Print</button>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h2>Calculation Results</h2>
+          <div class="result-grid">
+            <div class="box"><div class="k">Pump discharge per pump</div><div class="v" id="oPumpRate">—</div></div>
+            <div class="box"><div class="k">Total duty pumping rate</div><div class="v" id="oTotalQ">—</div></div>
+            <div class="box"><div class="k">Minimum active volume</div><div class="v" id="oActive">—</div></div>
+            <div class="box"><div class="k">Required plan area</div><div class="v" id="oArea">—</div></div>
+            <div class="box"><div class="k">Total wet well volume</div><div class="v" id="oTotalVol">—</div></div>
+            <div class="box"><div class="k">Total depth</div><div class="v" id="oDepth">—</div></div>
+            <div class="box"><div class="k">Minimum cycle time</div><div class="v" id="oTmin">—</div></div>
+            <div class="box"><div class="k">Pump-down time</div><div class="v" id="oTp">—</div></div>
+            <div class="box"><div class="k">Filling time</div><div class="v" id="oTf">—</div></div>
+            <div class="box"><div class="k">Estimated starts per hour</div><div class="v" id="oStarts">—</div></div>
+            <div class="box"><div class="k">Rectangular size</div><div class="v" id="oRect">—</div></div>
+            <div class="box"><div class="k">Circular diameter</div><div class="v" id="oDia">—</div></div>
+          </div>
+
+          <div class="summary">
+            <ul id="summary">
+              <li><span>Station type</span><strong>—</strong></li>
+              <li><span>Shape</span><strong>—</strong></li>
+              <li><span>Storage basis</span><strong>—</strong></li>
+              <li><span>Main result</span><strong>—</strong></li>
+            </ul>
+          </div>
         </div>
-      </section>
-      <section class="card">
-        <div class="card__head"><h2>Geometry Output</h2></div>
-        <div id="geometryGrid" class="results-grid"></div>
-      </section>
-      <section class="card">
-        <div class="card__head"><h2>Formula Notes</h2></div>
-        <div id="formulaHost" class="formula-stack"></div>
-      </section>
-    </section>
-  </main>
-  <footer class="footer shell">
-    For preliminary sizing only. Final design must be checked by a qualified engineer.
-  </footer>
-  <script defer src="js/app-standalone.js"></script>
+
+        <div class="card">
+          <h2>Warnings / Assumptions</h2>
+          <div id="state" class="state ok">Ready for calculation.</div>
+          <ul class="list" id="warnList"></ul>
+          <ul class="list">
+            <li>Pump discharge rate per pump is automatically set to inflow ÷ duty pumps.</li>
+            <li>Total duty pumping rate therefore equals incoming flow.</li>
+            <li>Minimum active volume is calculated using Vmin = Tmin × Q / 4.</li>
+            <li>Tmin = 3600 / starts per hour.</li>
+            <li>Plan area = active volume / effective depth.</li>
+            <li>Total wet well volume includes dead storage + effective depth + freeboard.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer>For preliminary sizing only. Final design must be checked by a qualified engineer.</footer>
+  </div>
+
+  <script>
+    const $=id=>document.getElementById(id);
+    const inputs=["inflow","pumpRate","numPumps","dutyPumps","starts","safety","effDepth","deadDepth","freeboard","fixedLength","fixedWidth","aspect"];
+    const out={
+      pumpRate:$("oPumpRate"),totalQ:$("oTotalQ"),active:$("oActive"),area:$("oArea"),
+      totalVol:$("oTotalVol"),depth:$("oDepth"),tmin:$("oTmin"),tp:$("oTp"),
+      tf:$("oTf"),starts:$("oStarts"),rect:$("oRect"),dia:$("oDia")
+    };
+
+    function fmt(n,d=3){
+      if(!isFinite(n)) return "—";
+      return Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:0});
+    }
+
+    function unit(n,u,d=3){
+      if(!isFinite(n)) return "—";
+      return `${fmt(n,d)} ${u}`;
+    }
+
+    function val(id){
+      const v=$(id).value;
+      return v===""?null:Number(v);
+    }
+
+    function shape(){
+      return document.querySelector('input[name="shape"]:checked').value;
+    }
+
+    function stationType(){
+      return document.querySelector('input[name="stationType"]:checked').value;
+    }
+
+    function clearErrors(){
+      document.querySelectorAll(".err").forEach(e=>e.textContent="");
+    }
+
+    function setErr(id,msg){
+      $("err-"+id).textContent=msg;
+    }
+
+    function togglePanels(){
+      const isRect=shape()==="rect";
+      $("rectPanel").classList.toggle("hidden",!isRect);
+      $("circPanel").classList.toggle("hidden",isRect);
+    }
+
+    function updateAutoPumpRate(){
+      const inflow=val("inflow");
+      const duty=val("dutyPumps");
+      if(inflow!==null && duty!==null && duty>0){
+        $("pumpRate").value=(inflow/duty).toFixed(3);
+      }else{
+        $("pumpRate").value="";
+      }
+    }
+
+    function resetOutputs(){
+      Object.values(out).forEach(x=>x.textContent="—");
+      $("summary").innerHTML=`
+        <li><span>Station type</span><strong>—</strong></li>
+        <li><span>Shape</span><strong>—</strong></li>
+        <li><span>Storage basis</span><strong>—</strong></li>
+        <li><span>Main result</span><strong>—</strong></li>`;
+      $("warnList").innerHTML="";
+      $("state").className="state ok";
+      $("state").textContent="Ready for calculation.";
+    }
+
+    function getData(){
+      updateAutoPumpRate();
+      return {
+        inflow:val("inflow"),
+        pumpRate:val("pumpRate"),
+        numPumps:val("numPumps"),
+        dutyPumps:val("dutyPumps"),
+        starts:val("starts"),
+        safety:val("safety")??0,
+        effDepth:val("effDepth"),
+        deadDepth:val("deadDepth"),
+        freeboard:val("freeboard"),
+        fixedLength:val("fixedLength"),
+        fixedWidth:val("fixedWidth"),
+        aspect:val("aspect"),
+        shape:shape(),
+        stationType:stationType()
+      };
+    }
+
+    function validate(d){
+      clearErrors();
+      let ok=true;
+      const warns=[];
+
+      if(!(d.inflow>0)){setErr("inflow","Enter positive inflow.");ok=false;}
+      if(!(Number.isInteger(d.numPumps)&&d.numPumps>=1)){setErr("numPumps","Enter integer >= 1.");ok=false;}
+      if(!(Number.isInteger(d.dutyPumps)&&d.dutyPumps>=1)){setErr("dutyPumps","Enter integer >= 1.");ok=false;}
+      if(ok && d.dutyPumps>d.numPumps){setErr("dutyPumps","Duty pumps cannot exceed installed pumps.");ok=false;}
+      if(!(d.starts>0)){setErr("starts","Enter positive starts/hr.");ok=false;}
+      if(!(d.effDepth>0)){setErr("effDepth","Effective depth must be > 0.");ok=false;}
+      if(!(d.deadDepth>=0)){setErr("deadDepth","Cannot be negative.");ok=false;}
+      if(!(d.freeboard>=0)){setErr("freeboard","Cannot be negative.");ok=false;}
+      if(!(d.safety>=0)){setErr("safety","Cannot be negative.");ok=false;}
+
+      if(d.shape==="rect"){
+        if(!(d.aspect>0)){setErr("aspect","Aspect ratio must be > 0.");ok=false;}
+        if(d.fixedLength!==null && !(d.fixedLength>0)){setErr("fixedLength","Must be > 0.");ok=false;}
+        if(d.fixedWidth!==null && !(d.fixedWidth>0)){setErr("fixedWidth","Must be > 0.");ok=false;}
+      }
+
+      if(ok && d.pumpRate!==null && !(d.pumpRate>0)){setErr("pumpRate","Invalid auto value.");ok=false;}
+      if(ok && d.starts>15) warns.push("Starts per hour is high. Review manufacturer limits.");
+      if(ok && d.starts<1) warns.push("Starts per hour is low. Resulting volume may be large.");
+
+      return {ok,warns};
+    }
+
+    function calcRect(area,d){
+      let L,W;
+      if(d.fixedLength && d.fixedWidth){
+        L=d.fixedLength; W=d.fixedWidth;
+      }else if(d.fixedLength && !d.fixedWidth){
+        L=d.fixedLength; W=area/L;
+      }else if(!d.fixedLength && d.fixedWidth){
+        W=d.fixedWidth; L=area/W;
+      }else{
+        W=Math.sqrt(area/d.aspect);
+        L=d.aspect*W;
+      }
+      return {L,W};
+    }
+
+    function calculate(){
+      const d=getData();
+      const v=validate(d);
+      if(!v.ok){
+        resetOutputs();
+        $("state").className="state warn";
+        $("state").textContent="Calculation could not be completed. Review highlighted inputs.";
+        return;
+      }
+
+      const warns=[...v.warns];
+      const QinLs=d.inflow;
+      const QpumpLs=d.pumpRate;
+      const QtotalLs=QpumpLs*d.dutyPumps;
+
+      const TminSec=3600/d.starts;
+      let Vmin=(TminSec*(QtotalLs/1000))/4;
+      Vmin*=1+d.safety/100;
+
+      const area=Vmin/d.effDepth;
+      const totalDepth=d.deadDepth+d.effDepth+d.freeboard;
+      const totalVol=area*totalDepth;
+
+      let tpSec=NaN;
+      if(QtotalLs>QinLs){
+        tpSec=Vmin/((QtotalLs-QinLs)/1000);
+      }else if(QtotalLs===QinLs){
+        warns.push("Total duty pumping rate equals inflow. No drawdown margin. Pump-down time is not defined.");
+      }else{
+        warns.push("Total duty pumping rate is less than inflow. Drawdown cannot occur.");
+      }
+
+      let tfSec=NaN;
+      if(QinLs>0) tfSec=Vmin/(QinLs/1000);
+
+      let estStarts=NaN;
+      if(isFinite(tpSec) && isFinite(tfSec) && tpSec>0 && tfSec>0){
+        estStarts=3600/(tpSec+tfSec);
+      }
+
+      let rect=null,dia=NaN;
+      if(d.shape==="rect"){
+        rect=calcRect(area,d);
+        if(rect.L<1 || rect.W<1) warns.push("Rectangular dimensions are very small.");
+        if(rect.L>20 || rect.W>20) warns.push("Rectangular dimensions are very large.");
+      }else{
+        dia=Math.sqrt((4*area)/Math.PI);
+        if(dia<1) warns.push("Circular diameter is very small.");
+        if(dia>15) warns.push("Circular diameter is very large.");
+      }
+
+      if(area<1) warns.push("Required plan area is very small.");
+      if(area>100) warns.push("Required plan area is very large.");
+      if(totalDepth<1) warns.push("Total depth is shallow. Review controls and submergence.");
+      if(d.stationType==="drywet") warns.push("Dry/wet sump selection affects equipment layout, but wet-side storage sizing remains based on sump hydraulics.");
+
+      out.pumpRate.textContent=unit(QpumpLs,"L/s",3);
+      out.totalQ.textContent=unit(QtotalLs,"L/s",3);
+      out.active.textContent=unit(Vmin,"m³",3);
+      out.area.textContent=unit(area,"m²",3);
+      out.totalVol.textContent=unit(totalVol,"m³",3);
+      out.depth.textContent=unit(totalDepth,"m",3);
+      out.tmin.textContent=unit(TminSec/60,"min",3);
+      out.tp.textContent=isFinite(tpSec)?unit(tpSec/60,"min",3):"Not defined";
+      out.tf.textContent=isFinite(tfSec)?unit(tfSec/60,"min",3):"—";
+      out.starts.textContent=isFinite(estStarts)?unit(estStarts,"starts/hr",2):"Not defined";
+      out.rect.textContent=rect?`L ${fmt(rect.L,3)} m × W ${fmt(rect.W,3)} m`:"—";
+      out.dia.textContent=isFinite(dia)?unit(dia,"m",3):"—";
+
+      const st=d.stationType==="wet"?"Wet well (submersible)":"Dry/wet sump (dry pumps)";
+      const sh=d.shape==="rect"?"Rectangular":"Circular";
+      const main=d.shape==="rect"
+        ? `L ${fmt(rect.L,3)} m × W ${fmt(rect.W,3)} m`
+        : `D ${fmt(dia,3)} m`;
+
+      $("summary").innerHTML=`
+        <li><span>Station type</span><strong>${st}</strong></li>
+        <li><span>Shape</span><strong>${sh}</strong></li>
+        <li><span>Storage basis</span><strong>Vmin = Tmin × Q / 4</strong></li>
+        <li><span>Main result</span><strong>${main}</strong></li>`;
+
+      $("warnList").innerHTML="";
+      warns.forEach(w=>{
+        const li=document.createElement("li");
+        li.textContent=w;
+        $("warnList").appendChild(li);
+      });
+
+      if(warns.length){
+        $("state").className="state warn";
+        $("state").textContent="Calculation completed with warnings to review.";
+      }else{
+        $("state").className="state ok";
+        $("state").textContent="Calculation completed successfully.";
+      }
+    }
+
+    function loadExample(){
+      $("inflow").value=500;
+      $("numPumps").value=3;
+      $("dutyPumps").value=2;
+      $("starts").value=6;
+      $("safety").value=10;
+      $("effDepth").value=1.5;
+      $("deadDepth").value=0.5;
+      $("freeboard").value=0.4;
+      $("fixedLength").value="";
+      $("fixedWidth").value="";
+      $("aspect").value=1.5;
+      document.querySelector('input[name="stationType"][value="wet"]').checked=true;
+      document.querySelector('input[name="shape"][value="rect"]').checked=true;
+      togglePanels();
+      updateAutoPumpRate();
+      calculate();
+    }
+
+    function resetForm(){
+      inputs.forEach(id=>$(id).value="");
+      $("aspect").value="1.5";
+      document.querySelector('input[name="stationType"][value="wet"]').checked=true;
+      document.querySelector('input[name="shape"][value="rect"]').checked=true;
+      togglePanels();
+      clearErrors();
+      resetOutputs();
+    }
+
+    function copyResults(){
+      const txt=[
+        "Wastewater Pump Station / Sump Pit Sizing",
+        `Pump discharge per pump: ${out.pumpRate.textContent}`,
+        `Total duty pumping rate: ${out.totalQ.textContent}`,
+        `Minimum active volume: ${out.active.textContent}`,
+        `Required plan area: ${out.area.textContent}`,
+        `Total wet well volume: ${out.totalVol.textContent}`,
+        `Total depth: ${out.depth.textContent}`,
+        `Minimum cycle time: ${out.tmin.textContent}`,
+        `Pump-down time: ${out.tp.textContent}`,
+        `Filling time: ${out.tf.textContent}`,
+        `Estimated starts per hour: ${out.starts.textContent}`,
+        `Rectangular size: ${out.rect.textContent}`,
+        `Circular diameter: ${out.dia.textContent}`
+      ].join("\n");
+      navigator.clipboard.writeText(txt).then(()=>{
+        $("copyBtn").textContent="Copied";
+        setTimeout(()=>$("copyBtn").textContent="Copy Results",1200);
+      });
+    }
+
+    ["inflow","dutyPumps"].forEach(id=>$(id).addEventListener("input",updateAutoPumpRate));
+    document.querySelectorAll('input[name="shape"]').forEach(r=>r.addEventListener("change",togglePanels));
+    $("calcBtn").addEventListener("click",calculate);
+    $("exampleBtn").addEventListener("click",loadExample);
+    $("resetBtn").addEventListener("click",resetForm);
+    $("copyBtn").addEventListener("click",copyResults);
+    $("printBtn").addEventListener("click",()=>window.print());
+
+    togglePanels();
+    loadExample();
+  </script>
 </body>
 </html>
