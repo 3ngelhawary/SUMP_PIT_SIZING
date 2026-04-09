@@ -1,0 +1,35 @@
+.result-card {
+  border: 1px solid #d8e5f3;
+  border-radius: 18px;
+  padding: 14px;
+  background: linear-gradient(180deg, #fbfdff, #f2f7fd);
+}
+.result-card__label { font-size: .84rem; color: var(--muted); margin-bottom: 6px; }
+.result-card__value { font-weight: 900; font-size: 1.22rem; color: #14396d; line-height: 1.2; }
+.result-card__sub { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+.summary-box {
+  margin-top: var(--space-4); border: 1px solid #cfe1fb;
+  border-radius: 20px; padding: 16px; background: linear-gradient(180deg, #f4f9ff, #ebf4ff);
+}
+.summary-box h3 { margin: 0 0 10px; color: #173c74; }
+.summary-item {
+  display: flex; justify-content: space-between; gap: 16px; padding: 9px 0;
+  border-bottom: 1px dashed #d5e3f5;
+}
+.summary-item:last-child { border-bottom: 0; }
+.status { border-radius: 14px; padding: 13px 14px; font-weight: 700; }
+.status--ok { background: #edf9f1; border: 1px solid #cdebd7; color: #1b6f44; }
+.status--warn { background: #fff8ea; border: 1px solid #f2dcad; color: #83580f; }
+.note-list, .assumption-list { margin: 12px 0 0; padding-left: 20px; line-height: 1.6; }
+.formula-card {
+  border: 1px solid #d9e6f5; border-radius: 18px; padding: 14px;
+  background: #fbfdff;
+}
+.formula-card h4 { margin: 0 0 8px; color: #173c74; }
+.formula-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+@media print {
+  body { background: #fff; }
+  .hero, .no-print { display: none !important; }
+  .app-grid { grid-template-columns: 1fr; margin-top: 0; }
+  .card { box-shadow: none; background: #fff; }
+}
