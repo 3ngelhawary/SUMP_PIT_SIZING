@@ -1,44 +1,27 @@
-import { cleanNumber } from "./format.js";
-export function selected(name) {
-  const node = document.querySelector(`input[name="${name}"]:checked`);
-  return node ? node.value : "";
-}
-export function raw(id) {
-  const node = document.getElementById(id);
-  return node ? node.value : "";
-}
-export function collectInputs() {
+import { byId } from './dom.js';
+
+const val = id => byId(id).value === '' ? null : Number(byId(id).value);
+
+export function getData() {
   return {
-    mode: selected("mode"),
-    shape: selected("shape"),
-    inflowLs: Number(raw("inflowLs")),
-    pumpLs: Number(raw("pumpLs")),
-    installedPumps: Number(raw("installedPumps")),
-    dutyPumps: Number(raw("dutyPumps")),
-    startsPerHour: Number(raw("startsPerHour")),
-    effectiveDepth: Number(raw("effectiveDepth")),
-    deadDepth: Number(raw("deadDepth")),
-    freeboardDepth: Number(raw("freeboardDepth")),
-    safetyFactor: Number(raw("safetyFactor") || 0),
-    fixedLength: cleanNumber(raw("fixedLength")),
-    fixedWidth: cleanNumber(raw("fixedWidth")),
-    aspectRatio: Number(raw("aspectRatio"))
+    inflow: val('inflow'), pumpRate: val('pumpRate'), numPumps: val('numPumps'), dutyPumps: val('dutyPumps'),
+    starts: val('starts'), safety: val('safety') ?? 0, effDepth: val('effDepth'), deadDepth: val('deadDepth'),
+    freeboard: val('freeboard'), fixedLength: val('fixedLength'), fixedWidth: val('fixedWidth'), aspect: val('aspect'),
+    stationType: document.querySelector('input[name="stationType"]:checked').value,
+    shape: document.querySelector('input[name="shape"]:checked').value
   };
 }
-export function clearErrors() {
-  document.querySelectorAll(".error").forEach(node => node.textContent = "");
-}
-export function setError(id, message) {
-  const node = document.getElementById(`err-${id}`);
-  if (node) node.textContent = message;
-}
+
 export function setValues(data) {
-  Object.entries(data).forEach(([key, value]) => {
-    const node = document.getElementById(key);
-    if (node) node.value = value;
+  Object.entries(data).forEach(([k, v]) => {
+    const el = byId(k); if (el) el.value = v;
   });
-  const m = document.querySelector(`input[name="mode"][value="${data.mode}"]`);
-  const s = document.querySelector(`input[name="shape"][value="${data.shape}"]`);
-  if (m) m.checked = true;
-  if (s) s.checked = true;
+  document.querySelector(`input[name="stationType"][value="${data.stationType}"]`).checked = true;
+  document.querySelector(`input[name="shape"][value="${data.shape}"]`).checked = true;
+}
+
+export function autoPumpRate() {
+  const inflow = val('inflow');
+  const duty = val('dutyPumps');
+  byId('pumpRate').value = inflow > 0 && duty > 0 ? (inflow / duty).toFixed(3) : '';
 }

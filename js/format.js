@@ -1,44 +1,26 @@
-export function n(value, digits = 3) {
-  if (!Number.isFinite(value)) return "—";
-  return Number(value).toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: digits
-  });
-}
-export function u(value, unit, digits = 3) {
-  if (!Number.isFinite(value)) return "—";
-  return `${n(value, digits)} ${unit}`;
-}
-export function textBlock(title, value, sub) {
-  return { title, value, sub };
-}
-export function lineItem(label, value) {
-  return { label, value };
-}
-export function cleanNumber(value) {
-  if (value === "" || value === null || value === undefined) return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-export function minutes(sec) {
-  return sec / 60;
-}
-export function htmlEscape(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-export function joinLines(lines) {
-  return lines.filter(Boolean).join("
-");
-}
-export function clamp(value, low, high) {
-  return Math.min(high, Math.max(low, value));
-}
-export function roundUp(value, step) {
-  if (!Number.isFinite(value) || !step) return value;
-  return Math.ceil(value / step) * step;
+export const fmt = (n, d = 3) => Number.isFinite(n)
+  ? Number(n).toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: 0 })
+  : '—';
+
+export const unit = (n, u, d = 3) => Number.isFinite(n) ? `${fmt(n, d)} ${u}` : '—';
+
+export const roundUp025 = n => Math.ceil(n / 0.25) * 0.25;
+
+export function resultText(state) {
+  const r = state.results;
+  return [
+    'Pump Station Sizing Pro',
+    `Pump discharge per pump: ${r.pumpRate}`,
+    `Total duty pumping rate: ${r.totalQ}`,
+    `Minimum active volume: ${r.active}`,
+    `Required plan area: ${r.area}`,
+    `Total wet well volume: ${r.totalVol}`,
+    `Total depth: ${r.depth}`,
+    `Minimum cycle time: ${r.tmin}`,
+    `Pump-down time: ${r.tp}`,
+    `Filling time: ${r.tf}`,
+    `Estimated starts/hr: ${r.startsEst}`,
+    `Rectangular size: ${r.rect}`,
+    `Circular diameter: ${r.dia}`
+  ].join('\n');
 }

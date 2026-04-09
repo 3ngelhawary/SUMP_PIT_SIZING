@@ -1,0 +1,12 @@
+.sketch-box { padding: 12px; background: linear-gradient(180deg, #fbfdff, #f3f9ff); }
+.sketch-box h3 { margin-bottom: 10px; color: #17407d; }
+#sectionSketch, #topSketch { min-height: 240px; }
+.sk-label { font-size: 13px; fill: #43607e; }
+.sk-title { font-size: 18px; fill: #163d79; font-weight: 700; }
+.sk-tank { fill: #ecf5ff; stroke: #1960cb; stroke-width: 3; }
+.sk-water { fill: #8fc9ff; }
+.sk-dead { fill: #d9dfe7; }
+.sk-free { fill: #ffd69a; }
+.sk-line { stroke: #4a6178; stroke-width: 2; }
+.sk-dim { font-size: 14px; fill: #183b6d; font-weight: 600; }
+.legend-box { fill: #fff; stroke: #d9e5f2; }

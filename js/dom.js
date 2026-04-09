@@ -1,47 +1,25 @@
-import { fieldMeta, defaults, setRef } from "./state.js";
-export function qs(id) { return document.getElementById(id); }
-export function el(tag, cls, text) {
-  const node = document.createElement(tag);
-  if (cls) node.className = cls;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-export function renderInputs() {
-  const host = qs("inputsHost");
-  host.innerHTML = "";
-  fieldMeta.forEach(([key, label, unit, help]) => {
-    const wrap = el("div", "field");
-    const lab = el("label", "label-row", label);
-    lab.htmlFor = key;
-    const inWrap = el("div", "input-wrap");
-    const input = el("input", "input");
-    input.id = key;
-    input.type = "number";
-    input.step = "any";
-    input.value = defaults[key];
-    const pill = el("span", "unit-pill", unit);
-    const helpEl = el("div", "help", help);
-    const err = el("div", "error");
-    err.id = `err-${key}`;
-    inWrap.append(input, pill);
-    wrap.append(lab, inWrap, helpEl, err);
-    host.appendChild(wrap);
-  });
-}
-export function renderConfig() {
-  const host = qs("configHost");
-  host.innerHTML = `
-    <div class="toggle-row">
-      <label class="pill"><input type="radio" name="mode" value="wetWell" checked /> Wet well (submersible pumps)</label>
-      <label class="pill"><input type="radio" name="mode" value="dryWet" /> Dry/wet sump (dry pumps)</label>
+import { inputDefs, rectDefs, resultDefs } from './config.js';
+
+const makeField = ([id, label, unit, help, ro]) => `
+  <div class="field">
+    <label for="${id}">${label}</label>
+    <div class="input-wrap">
+      <input id="${id}" type="number" step="any" ${ro ? 'readonly' : ''}>
+      <span class="unit">${unit}</span>
     </div>
-    <div class="toggle-row">
-      <label class="pill"><input type="radio" name="shape" value="rectangular" checked /> Rectangular</label>
-      <label class="pill"><input type="radio" name="shape" value="circular" /> Circular</label>
-    </div>
-    <div class="help">Dry/wet sump uses the same wet-side storage sizing but indicates dry-installed pump arrangement.</div>
-  `;
+    <div class="help">${help || ''}</div>
+    <div class="error" id="err-${id}"></div>
+  </div>`;
+
+export function buildDom() {
+  inputGrid.innerHTML = inputDefs.map(makeField).join('');
+  rectPanel.innerHTML = rectDefs.map(makeField).join('');
+  resultsGrid.innerHTML = resultDefs.map(([k, t]) => `
+    <div class="result-box"><div class="result-key">${t}</div><div class="result-value" id="res-${k}">—</div></div>`).join('');
 }
-export function captureRefs() {
-  ["calculateBtn", "exampleBtn", "resetBtn", "copyBtn", "printBtn", "warningList", "statusBox", "resultsGrid", "geometryGrid", "summaryHost", "formulaHost"].forEach(id => setRef(id, qs(id)));
+
+export function radios(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]`)];
 }
+
+export const byId = id => document.getElementById(id);

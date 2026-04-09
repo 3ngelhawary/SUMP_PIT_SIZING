@@ -1,43 +1,34 @@
-import { ASSUMPTIONS } from "./config.js";
-import { dom } from "./dom.js";
-import { fmt, text, unit } from "./utils.js";
+import { fmt, unit } from './format.js';
+import { byId } from './dom.js';
 
-export function renderAssumptions() {
-  dom.assumptionList.innerHTML = ASSUMPTIONS.map(item => `<li>${item}</li>`).join("");
+export function renderResults(d, m) {
+  const map = {
+    pumpRate: unit(m.qPump, 'L/s', 3), totalQ: unit(m.qTotal, 'L/s', 3), active: unit(m.activeVol, 'm³', 3),
+    area: unit(m.areaRounded, 'm²', 3), totalVol: unit(m.totalVol, 'm³', 3), depth: unit(m.totalDepthRounded, 'm', 2),
+    tmin: unit(m.tMinSec / 60, 'min', 3), tp: Number.isFinite(m.tpSec) ? unit(m.tpSec / 60, 'min', 3) : 'Not defined',
+    tf: unit(m.tfSec / 60, 'min', 3), startsEst: Number.isFinite(m.startsEst) ? unit(m.startsEst, 'starts/hr', 2) : 'Not defined',
+    rect: m.rect ? `L ${fmt(m.rect.L, 2)} m × W ${fmt(m.rect.W, 2)} m` : '—', dia: Number.isFinite(m.dia) ? unit(m.dia, 'm', 2) : '—'
+  };
+  Object.entries(map).forEach(([k, v]) => byId(`res-${k}`).textContent = v);
+  summaryBox.innerHTML = [
+    ['Station type', d.stationType === 'wet' ? 'Wet well' : 'Dry / wet sump'],
+    ['Shape', d.shape === 'rect' ? 'Rectangular' : 'Circular'],
+    ['Storage basis', 'V = Tmin × Q / 4'],
+    ['Main result', d.shape === 'rect' ? map.rect : `D ${fmt(m.dia, 2)} m`]
+  ].map(([a,b]) => `<div class="summary-row"><span>${a}</span><strong>${b}</strong></div>`).join('');
+  return map;
 }
 
-export function renderStatus(mode, message) {
-  dom.statusBox.className = `status status--${mode}`;
-  dom.statusBox.textContent = message;
+export function renderWarnings(messages, isOk) {
+  stateBox.className = `state ${isOk ? 'ok' : 'warn'}`;
+  stateBox.textContent = isOk ? 'Calculation completed successfully.' : 'Calculation completed with warnings.';
+  warningList.innerHTML = messages.map(x => `<li>${x}</li>`).join('');
 }
 
-export function renderWarnings(items) {
-  dom.warningList.innerHTML = items.map(item => `<li>${item}</li>`).join("");
-}
-
-export function renderResults(input, result) {
-  text("kpi-effectiveVolume", unit(result.effectiveVolume, "m³"));
-  text("kpi-totalVolume", unit(result.totalVolume, "m³"));
-  text("kpi-planArea", unit(result.planArea, "m²"));
-  text("kpi-totalPumpRate", unit(result.totalPumpRateLs, "L/s", 2));
-  text("kpi-cycleTime", unit(result.cycleTime / 60, "min"));
-  text("kpi-starts", unit(result.starts, "starts/hr", 2));
-  text("kpi-fillTime", unit(result.fillTime / 60, "min"));
-  text("kpi-runTime", unit(result.runTime / 60, "min"));
-  text("kpi-length", result.length ? unit(result.length, "m") : "—");
-  text("kpi-width", result.width ? unit(result.width, "m") : "—");
-  text("kpi-diameter", result.diameter ? unit(result.diameter, "m") : "—");
-  text("kpi-totalDepth", unit(result.totalDepth, "m"));
-
-  const primary = input.shape === "rectangular"
-    ? `L ${fmt(result.length)} m × W ${fmt(result.width)} m`
-    : `D ${fmt(result.diameter)} m`;
-
-  dom.summaryPanel.innerHTML = `
-    <div class="summary__row"><span class="summary__label">Shape</span><span class="summary__value">${input.shape}</span></div>
-    <div class="summary__row"><span class="summary__label">Primary geometry</span><span class="summary__value">${primary}</span></div>
-    <div class="summary__row"><span class="summary__label">Net usable storage</span><span class="summary__value">${fmt(result.effectiveVolume)} m³</span></div>
-    <div class="summary__row"><span class="summary__label">Cycle time</span><span class="summary__value">${fmt(result.cycleTime / 60)} min</span></div>
-    <div class="summary__row"><span class="summary__label">Total depth</span><span class="summary__value">${fmt(result.totalDepth)} m</span></div>
-  `;
+export function resetRender() {
+  document.querySelectorAll('.result-value').forEach(e => e.textContent = '—');
+  summaryBox.innerHTML = '';
+  stateBox.className = 'state ok';
+  stateBox.textContent = 'Ready.';
+  warningList.innerHTML = '';
 }

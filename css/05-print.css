@@ -1,0 +1,7 @@
+@media print {
+  body { background: #fff; }
+  .hero, .no-print, .actions { display: none !important; }
+  .shell { width: 100%; margin: 0; }
+  .grid { grid-template-columns: 1fr; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
