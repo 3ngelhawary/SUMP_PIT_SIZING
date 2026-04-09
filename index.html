@@ -1,97 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pump Station Sizing Pro</title>
-  <link rel="stylesheet" href="css/00-vars.css" />
-  <link rel="stylesheet" href="css/01-base.css" />
-  <link rel="stylesheet" href="css/02-layout.css" />
-  <link rel="stylesheet" href="css/03-components.css" />
-  <link rel="stylesheet" href="css/04-sketch.css" />
-  <link rel="stylesheet" href="css/05-print.css" />
+<meta charset="UTF-8">
+<title>Pump Station</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="shell">
-    <header class="hero">
-      <div>
-        <span class="badge">Pump Station Calculator</span>
-        <h1>Pump Station Sizing Pro</h1>
-        <p>Three-column preliminary sizing app for wet wells and dry-wet sumps with realistic live sketches, rim-controlled depth, and inlet-controlled operating levels.</p>
-      </div>
-      <div class="hero-metric">
-        <div class="metric-label">Active Mode</div>
-        <div class="metric-value" id="activeModeValue">Wet Well + Circular</div>
-      </div>
-    </header>
 
-    <main class="grid three-col">
-      <section class="col stack-col">
-        <article class="card">
-          <h2>Configuration</h2>
-          <div class="switch-stack first-line">
-            <label class="chip"><input type="radio" name="stationType" value="wet" checked> Wet well</label>
-            <label class="chip"><input type="radio" name="stationType" value="drywet"> Dry / wet sump</label>
-          </div>
-          <div class="fields two" id="inputGrid"></div>
-          <div class="actions no-print">
-            <button id="calcBtn" class="btn btn-primary">Calculate</button>
-            <button id="exampleBtn" class="btn btn-soft">Load Example</button>
-            <button id="resetBtn" class="btn btn-ghost">Reset</button>
-          </div>
-        </article>
-      </section>
+<div class="container">
 
-      <section class="col stack-col">
-        <article class="card printable">
-          <h2>Results</h2>
-          <div class="results" id="resultsGrid"></div>
-          <div class="summary" id="summaryBox"></div>
-          <div class="actions no-print compact-actions">
-            <button id="copyBtn" class="btn btn-ghost">Copy Results</button>
-            <button id="printBtn" class="btn btn-ghost">Print</button>
-          </div>
-        </article>
+<div class="col">
+<h3>Mode</h3>
+<label><input type="radio" name="mode" checked> Wet</label>
+<label><input type="radio" name="mode"> Dry/Wet</label>
 
-        <article class="card">
-          <h2>Warnings & Assumptions</h2>
-          <div id="stateBox" class="state ok">Ready.</div>
-          <ul id="warningList" class="warning-list"></ul>
-          <ul class="assumption-list">
-            <li>Total pumps installed = duty pumps + standby pumps.</li>
-            <li>Pump discharge per pump = inflow ÷ duty pumps.</li>
-            <li>Low water level = pump axis height.</li>
-            <li>Maximum water level = inlet invert level − freeboard.</li>
-            <li>Total internal depth = sump rim elevation.</li>
-            <li>Inlet diameter is entered in mm and converted internally to metres.</li>
-          </ul>
-        </article>
-      </section>
+<h3>Inputs</h3>
+Inflow (L/s)<input id="inflow" value="500">
+Duty<input id="duty" value="1">
+Standby<input id="standby" value="1">
+Total<input id="total" readonly>
+Pump/each<input id="pump" readonly>
+Starts/hr<input id="starts" value="6">
+</div>
 
-      <section class="col stack-col">
-        <article class="card">
-          <h2>Shape</h2>
-          <div class="switch-stack first-line">
-            <label class="chip"><input type="radio" name="shape" value="circ" checked> Circular</label>
-            <label class="chip"><input type="radio" name="shape" value="rect"> Rectangular</label>
-          </div>
-          <div id="rectPanel" class="fields three compact"></div>
-          <div class="sketch-grid solo-sketch">
-            <div class="sketch-box">
-              <h3>Section View</h3>
-              <svg id="sectionSketch" viewBox="0 0 680 380"></svg>
-            </div>
-            <div class="sketch-box">
-              <h3>Top View</h3>
-              <svg id="topSketch" viewBox="0 0 680 280"></svg>
-            </div>
-          </div>
-        </article>
-      </section>
-    </main>
+<div class="col">
+<h3>Levels</h3>
+Pump axis<input id="axis" value="0.8">
+Pipe dia (mm)<input id="pipe" value="400">
+Invert<input id="invert" value="2.5">
+Freeboard<input id="free" value="0.3">
+Eff depth<input id="eff" value="1.5">
 
-    <footer>For preliminary sizing only. Final design must be checked by a qualified engineer.</footer>
-  </div>
-  <script type="module" src="js/app.js"></script>
+<button onclick="calc()">Calculate</button>
+
+<div id="out"></div>
+</div>
+
+<div class="col">
+<h3>Shape</h3>
+<label><input type="radio" name="shape" checked> Circular</label>
+<label><input type="radio" name="shape"> Rectangular</label>
+
+<svg id="svg" viewBox="0 0 300 300"></svg>
+</div>
+
+</div>
+
+<script src="js/app.js"></script>
 </body>
 </html>
