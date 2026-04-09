@@ -1,51 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Pump Station</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pump Station Sizing</title>
+  <link rel="stylesheet" href="css/00-vars.css" />
+  <link rel="stylesheet" href="css/01-base.css" />
+  <link rel="stylesheet" href="css/02-layout.css" />
+  <link rel="stylesheet" href="css/03-components.css" />
+  <link rel="stylesheet" href="css/04-sketch.css" />
 </head>
 <body>
+  <header class="hero">
+    <div class="hero__inner">
+      <div>
+        <div class="eyebrow">Pump Station / Sump Sizing</div>
+        <h1>Active Mode: <span id="activeModeText">Wet Well + Circular</span></h1>
+        <p>Three-column layout with dynamic sketch and stable direct-file loading.</p>
+      </div>
+    </div>
+  </header>
 
-<div class="container">
+  <main class="page">
+    <section class="card">
+      <h2>Mode</h2>
+      <div class="option-list top-gap">
+        <label class="choice"><input type="radio" name="mode" value="wet" checked><span>Wet Well</span></label>
+        <label class="choice"><input type="radio" name="mode" value="drywet"><span>Dry / Wet Sump</span></label>
+      </div>
 
-<div class="col">
-<h3>Mode</h3>
-<label><input type="radio" name="mode" checked> Wet</label>
-<label><input type="radio" name="mode"> Dry/Wet</label>
+      <h2 class="section-gap">Inputs</h2>
+      <div class="form-grid">
+        <label class="field">
+          <span>Inflow</span>
+          <div class="input-row"><input id="inflow" type="number" value="500" step="any"><em>L/s</em></div>
+        </label>
+        <label class="field">
+          <span>Duty Pumps</span>
+          <div class="input-row"><input id="duty" type="number" value="1" step="1" min="1"><em>No.</em></div>
+        </label>
+        <label class="field">
+          <span>Standby Pumps</span>
+          <div class="input-row"><input id="standby" type="number" value="1" step="1" min="0"><em>No.</em></div>
+        </label>
+        <label class="field">
+          <span>Total Pumps Installed</span>
+          <div class="input-row"><input id="totalPumps" type="number" readonly><em>Auto</em></div>
+        </label>
+        <label class="field">
+          <span>Pump Discharge per Pump</span>
+          <div class="input-row"><input id="pumpPer" type="number" readonly><em>L/s</em></div>
+        </label>
+        <label class="field">
+          <span>Starts per Hour</span>
+          <div class="input-row"><input id="starts" type="number" value="6" step="any" min="0.1"><em>1/hr</em></div>
+        </label>
+      </div>
+    </section>
 
-<h3>Inputs</h3>
-Inflow (L/s)<input id="inflow" value="500">
-Duty<input id="duty" value="1">
-Standby<input id="standby" value="1">
-Total<input id="total" readonly>
-Pump/each<input id="pump" readonly>
-Starts/hr<input id="starts" value="6">
-</div>
+    <section class="card">
+      <h2>Levels</h2>
+      <div class="form-grid">
+        <label class="field">
+          <span>Sump Rim Elevation</span>
+          <div class="input-row"><input id="rim" type="number" value="3.20" step="any"><em>m</em></div>
+        </label>
+        <label class="field">
+          <span>Pipe Invert Level</span>
+          <div class="input-row"><input id="invert" type="number" value="2.60" step="any"><em>m</em></div>
+        </label>
+        <label class="field">
+          <span>Inlet Pipe Dia</span>
+          <div class="input-row"><input id="pipeDia" type="number" value="400" step="any"><em>mm</em></div>
+        </label>
+        <label class="field">
+          <span>Freeboard</span>
+          <div class="input-row"><input id="freeboard" type="number" value="0.30" step="any"><em>m</em></div>
+        </label>
+        <label class="field">
+          <span>Pump Axis Height</span>
+          <div class="input-row"><input id="axis" type="number" value="0.80" step="any"><em>m</em></div>
+        </label>
+        <label class="field">
+          <span>Effective Depth</span>
+          <div class="input-row"><input id="effectiveDepth" type="number" value="1.50" step="any"><em>m</em></div>
+        </label>
+        <label class="field">
+          <span>Safety Factor</span>
+          <div class="input-row"><input id="safety" type="number" value="10" step="any"><em>%</em></div>
+        </label>
+      </div>
 
-<div class="col">
-<h3>Levels</h3>
-Pump axis<input id="axis" value="0.8">
-Pipe dia (mm)<input id="pipe" value="400">
-Invert<input id="invert" value="2.5">
-Freeboard<input id="free" value="0.3">
-Eff depth<input id="eff" value="1.5">
+      <div class="actions">
+        <button id="calcBtn" class="btn btn--primary" type="button">Calculate</button>
+        <button id="exampleBtn" class="btn" type="button">Example</button>
+        <button id="resetBtn" class="btn" type="button">Reset</button>
+      </div>
 
-<button onclick="calc()">Calculate</button>
+      <h2 class="section-gap">Results</h2>
+      <div class="results-grid">
+        <div class="metric"><span>Minimum Active Volume</span><strong id="outVolume">—</strong></div>
+        <div class="metric"><span>Plan Area</span><strong id="outArea">—</strong></div>
+        <div class="metric"><span>Total Inner Depth</span><strong id="outDepth">—</strong></div>
+        <div class="metric"><span>Total Inner Volume</span><strong id="outTotalVol">—</strong></div>
+        <div class="metric"><span>Cycle Time</span><strong id="outCycle">—</strong></div>
+        <div class="metric"><span>Main Size</span><strong id="outMain">—</strong></div>
+      </div>
+    </section>
 
-<div id="out"></div>
-</div>
+    <section class="card">
+      <h2>Shape</h2>
+      <div class="option-list top-gap">
+        <label class="choice"><input type="radio" name="shape" value="circular" checked><span>Circular</span></label>
+        <label class="choice"><input type="radio" name="shape" value="rectangular"><span>Rectangular</span></label>
+      </div>
 
-<div class="col">
-<h3>Shape</h3>
-<label><input type="radio" name="shape" checked> Circular</label>
-<label><input type="radio" name="shape"> Rectangular</label>
+      <div class="sketch-shell">
+        <svg id="sketch" viewBox="0 0 520 520" aria-label="Pump station sketch"></svg>
+      </div>
+    </section>
+  </main>
 
-<svg id="svg" viewBox="0 0 300 300"></svg>
-</div>
-
-</div>
-
-<script src="js/app.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/dom.js"></script>
+  <script src="js/engineering.js"></script>
+  <script src="js/sketch.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
