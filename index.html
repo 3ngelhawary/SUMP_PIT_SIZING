@@ -28,7 +28,7 @@
       background:linear-gradient(180deg,#edf4fb 0%,#f8fbff 100%);
     }
     .wrap{
-      width:min(1200px,calc(100% - 24px));
+      width:min(1300px,calc(100% - 24px));
       margin:18px auto 30px;
     }
     .hero{
@@ -43,7 +43,7 @@
     .hero p{margin:0;line-height:1.6;color:rgba(255,255,255,.92)}
     .layout{
       display:grid;
-      grid-template-columns:1.05fr .95fr;
+      grid-template-columns:1.02fr .98fr;
       gap:18px;
     }
     .stack{display:grid;gap:18px}
@@ -161,6 +161,28 @@
     }
     .summary li:last-child{border-bottom:none;padding-bottom:0}
     .hidden{display:none}
+    .sketch-wrap{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    .sketch-box{
+      background:linear-gradient(180deg,#fbfdff,#f2f8fe);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+    svg{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+    .caption{
+      font-size:.86rem;
+      color:var(--muted);
+      line-height:1.5;
+      margin-top:8px;
+    }
     footer{
       text-align:center;
       color:var(--muted);
@@ -177,7 +199,7 @@
   <div class="wrap">
     <div class="hero">
       <h1>Wastewater Pump Station / Sump Pit Sizing</h1>
-      <p>Automatic pump rate per pump = incoming flow / duty pumps. SI units only. Preliminary sizing for rectangular or circular wet well, with wet well or dry/wet sump configuration.</p>
+      <p>Automatic pump rate per pump = incoming flow / duty pumps. SI units only. Generated dimensions are rounded up to the nearest 0.25 m. Includes live engineering sketch.</p>
     </div>
 
     <div class="layout">
@@ -331,6 +353,21 @@
             <button class="b3" id="printBtn" type="button">Print</button>
           </div>
         </div>
+
+        <div class="card">
+          <h2>Engineering Sketch</h2>
+          <div class="sketch-wrap">
+            <div class="sketch-box">
+              <svg id="sketchSvg" viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="700" height="420" fill="#f8fbff"/>
+                <text x="350" y="210" text-anchor="middle" font-size="24" fill="#6a7f94" font-family="Segoe UI">Run calculation to generate sketch</text>
+              </svg>
+            </div>
+            <div class="caption" id="sketchCaption">
+              Sketch shows internal shape, effective depth, dead storage, freeboard, and rounded design dimensions.
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="stack">
@@ -342,13 +379,13 @@
             <div class="box"><div class="k">Minimum active volume</div><div class="v" id="oActive">—</div></div>
             <div class="box"><div class="k">Required plan area</div><div class="v" id="oArea">—</div></div>
             <div class="box"><div class="k">Total wet well volume</div><div class="v" id="oTotalVol">—</div></div>
-            <div class="box"><div class="k">Total depth</div><div class="v" id="oDepth">—</div></div>
+            <div class="box"><div class="k">Total depth (rounded)</div><div class="v" id="oDepth">—</div></div>
             <div class="box"><div class="k">Minimum cycle time</div><div class="v" id="oTmin">—</div></div>
             <div class="box"><div class="k">Pump-down time</div><div class="v" id="oTp">—</div></div>
             <div class="box"><div class="k">Filling time</div><div class="v" id="oTf">—</div></div>
             <div class="box"><div class="k">Estimated starts per hour</div><div class="v" id="oStarts">—</div></div>
-            <div class="box"><div class="k">Rectangular size</div><div class="v" id="oRect">—</div></div>
-            <div class="box"><div class="k">Circular diameter</div><div class="v" id="oDia">—</div></div>
+            <div class="box"><div class="k">Rectangular size (rounded)</div><div class="v" id="oRect">—</div></div>
+            <div class="box"><div class="k">Circular diameter (rounded)</div><div class="v" id="oDia">—</div></div>
           </div>
 
           <div class="summary">
@@ -370,8 +407,8 @@
             <li>Total duty pumping rate therefore equals incoming flow.</li>
             <li>Minimum active volume is calculated using Vmin = Tmin × Q / 4.</li>
             <li>Tmin = 3600 / starts per hour.</li>
-            <li>Plan area = active volume / effective depth.</li>
-            <li>Total wet well volume includes dead storage + effective depth + freeboard.</li>
+            <li>All generated dimensions are rounded up to the next 0.25 m.</li>
+            <li>Area and total volume are recalculated using rounded dimensions.</li>
           </ul>
         </div>
       </div>
@@ -426,6 +463,10 @@
       $("circPanel").classList.toggle("hidden",isRect);
     }
 
+    function roundUp025(n){
+      return Math.ceil(n/0.25)*0.25;
+    }
+
     function updateAutoPumpRate(){
       const inflow=val("inflow");
       const duty=val("dutyPumps");
@@ -446,6 +487,7 @@
       $("warnList").innerHTML="";
       $("state").className="state ok";
       $("state").textContent="Ready for calculation.";
+      $("sketchSvg").innerHTML=`<rect x="0" y="0" width="700" height="420" fill="#f8fbff"/><text x="350" y="210" text-anchor="middle" font-size="24" fill="#6a7f94" font-family="Segoe UI">Run calculation to generate sketch</text>`;
     }
 
     function getData(){
@@ -499,16 +541,104 @@
     function calcRect(area,d){
       let L,W;
       if(d.fixedLength && d.fixedWidth){
-        L=d.fixedLength; W=d.fixedWidth;
+        L=d.fixedLength;
+        W=d.fixedWidth;
       }else if(d.fixedLength && !d.fixedWidth){
-        L=d.fixedLength; W=area/L;
+        L=d.fixedLength;
+        W=area/L;
       }else if(!d.fixedLength && d.fixedWidth){
-        W=d.fixedWidth; L=area/W;
+        W=d.fixedWidth;
+        L=area/W;
       }else{
         W=Math.sqrt(area/d.aspect);
         L=d.aspect*W;
       }
       return {L,W};
+    }
+
+    function drawSketch(data,res){
+      const svg=$("sketchSvg");
+      const totalDepth=res.totalDepthRounded;
+      const dead=data.deadDepth;
+      const eff=data.effDepth;
+      const free=data.freeboard;
+      const scale=240/Math.max(totalDepth,0.1);
+      const x0=160;
+      const yBase=350;
+      const w=260;
+      const h=totalDepth*scale;
+      const deadH=dead*scale;
+      const effH=eff*scale;
+      const freeH=free*scale;
+      const yTop=yBase-h;
+      const yDead=yBase-deadH;
+      const yEff=yBase-deadH-effH;
+      const shapeText=data.shape==="rect"
+        ? `Rectangular: ${fmt(res.rectL,2)} m × ${fmt(res.rectW,2)} m`
+        : `Circular: D ${fmt(res.dia,2)} m`;
+      const stationText=data.stationType==="wet" ? "Wet well (submersible pumps)" : "Dry/wet sump (dry pumps)";
+
+      let chamber='';
+      if(data.shape==="rect"){
+        chamber=`
+          <rect x="${x0}" y="${yTop}" width="${w}" height="${h}" rx="8" fill="#eef6ff" stroke="#1f5fae" stroke-width="3"/>
+          <rect x="${x0}" y="${yDead}" width="${w}" height="${deadH}" fill="#d6dde6"/>
+          <rect x="${x0}" y="${yEff}" width="${w}" height="${effH}" fill="#8dc3ff"/>
+          <rect x="${x0}" y="${yTop}" width="${w}" height="${freeH}" fill="#f7d7a8"/>
+        `;
+      }else{
+        chamber=`
+          <ellipse cx="${x0+w/2}" cy="${yTop+18}" rx="${w/2}" ry="18" fill="#eef6ff" stroke="#1f5fae" stroke-width="3"/>
+          <rect x="${x0}" y="${yTop+18}" width="${w}" height="${h-36}" fill="#eef6ff" stroke="#1f5fae" stroke-width="3"/>
+          <ellipse cx="${x0+w/2}" cy="${yBase-18}" rx="${w/2}" ry="18" fill="#eef6ff" stroke="#1f5fae" stroke-width="3"/>
+          <clipPath id="tankClip">
+            <rect x="${x0}" y="${yTop}" width="${w}" height="${h}" rx="8"/>
+          </clipPath>
+          <rect x="${x0}" y="${yDead}" width="${w}" height="${deadH}" fill="#d6dde6" clip-path="url(#tankClip)"/>
+          <rect x="${x0}" y="${yEff}" width="${w}" height="${effH}" fill="#8dc3ff" clip-path="url(#tankClip)"/>
+          <rect x="${x0}" y="${yTop}" width="${w}" height="${freeH}" fill="#f7d7a8" clip-path="url(#tankClip)"/>
+        `;
+      }
+
+      svg.innerHTML=`
+        <rect x="0" y="0" width="700" height="420" fill="#f8fbff"/>
+        <text x="24" y="28" font-size="20" font-weight="700" fill="#173d73" font-family="Segoe UI">Engineering Sketch</text>
+        <text x="24" y="54" font-size="14" fill="#66788a" font-family="Segoe UI">${stationText}</text>
+        ${chamber}
+
+        <line x1="${x0+w+40}" y1="${yTop}" x2="${x0+w+40}" y2="${yBase}" stroke="#334e68" stroke-width="2"/>
+        <line x1="${x0+w+30}" y1="${yTop}" x2="${x0+w+50}" y2="${yTop}" stroke="#334e68" stroke-width="2"/>
+        <line x1="${x0+w+30}" y1="${yBase}" x2="${x0+w+50}" y2="${yBase}" stroke="#334e68" stroke-width="2"/>
+        <text x="${x0+w+58}" y="${(yTop+yBase)/2}" font-size="15" fill="#173d73" font-family="Segoe UI">Total depth = ${fmt(res.totalDepthRounded,2)} m</text>
+
+        <line x1="${x0-40}" y1="${yDead}" x2="${x0-40}" y2="${yBase}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-50}" y1="${yDead}" x2="${x0-30}" y2="${yDead}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-50}" y1="${yBase}" x2="${x0-30}" y2="${yBase}" stroke="#4d647a" stroke-width="2"/>
+        <text x="20" y="${(yDead+yBase)/2}" font-size="14" fill="#4d647a" font-family="Segoe UI">Dead = ${fmt(dead,2)} m</text>
+
+        <line x1="${x0-75}" y1="${yEff}" x2="${x0-75}" y2="${yDead}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-85}" y1="${yEff}" x2="${x0-65}" y2="${yEff}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-85}" y1="${yDead}" x2="${x0-65}" y2="${yDead}" stroke="#4d647a" stroke-width="2"/>
+        <text x="20" y="${(yEff+yDead)/2}" font-size="14" fill="#4d647a" font-family="Segoe UI">Effective = ${fmt(eff,2)} m</text>
+
+        <line x1="${x0-110}" y1="${yTop}" x2="${x0-110}" y2="${yEff}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-120}" y1="${yTop}" x2="${x0-100}" y2="${yTop}" stroke="#4d647a" stroke-width="2"/>
+        <line x1="${x0-120}" y1="${yEff}" x2="${x0-100}" y2="${yEff}" stroke="#4d647a" stroke-width="2"/>
+        <text x="20" y="${(yTop+yEff)/2}" font-size="14" fill="#4d647a" font-family="Segoe UI">Freeboard = ${fmt(free,2)} m</text>
+
+        <line x1="${x0}" y1="${yBase+32}" x2="${x0+w}" y2="${yBase+32}" stroke="#334e68" stroke-width="2"/>
+        <line x1="${x0}" y1="${yBase+24}" x2="${x0}" y2="${yBase+40}" stroke="#334e68" stroke-width="2"/>
+        <line x1="${x0+w}" y1="${yBase+24}" x2="${x0+w}" y2="${yBase+40}" stroke="#334e68" stroke-width="2"/>
+        <text x="${x0+w/2}" y="${yBase+55}" text-anchor="middle" font-size="15" fill="#173d73" font-family="Segoe UI">${shapeText}</text>
+
+        <rect x="500" y="90" width="160" height="120" rx="12" fill="#ffffff" stroke="#d8e2ee"/>
+        <rect x="516" y="108" width="18" height="18" fill="#f7d7a8" stroke="#d8e2ee"/>
+        <text x="545" y="122" font-size="13" fill="#4d647a" font-family="Segoe UI">Freeboard</text>
+        <rect x="516" y="138" width="18" height="18" fill="#8dc3ff" stroke="#d8e2ee"/>
+        <text x="545" y="152" font-size="13" fill="#4d647a" font-family="Segoe UI">Effective</text>
+        <rect x="516" y="168" width="18" height="18" fill="#d6dde6" stroke="#d8e2ee"/>
+        <text x="545" y="182" font-size="13" fill="#4d647a" font-family="Segoe UI">Dead storage</text>
+      `;
     }
 
     function calculate(){
@@ -530,10 +660,7 @@
       let Vmin=(TminSec*(QtotalLs/1000))/4;
       Vmin*=1+d.safety/100;
 
-      const area=Vmin/d.effDepth;
-      const totalDepth=d.deadDepth+d.effDepth+d.freeboard;
-      const totalVol=area*totalDepth;
-
+      const rawArea=Vmin/d.effDepth;
       let tpSec=NaN;
       if(QtotalLs>QinLs){
         tpSec=Vmin/((QtotalLs-QinLs)/1000);
@@ -546,45 +673,55 @@
       let tfSec=NaN;
       if(QinLs>0) tfSec=Vmin/(QinLs/1000);
 
+      let rect=null,dia=NaN;
+      let finalArea=rawArea;
+      let totalDepthRounded=roundUp025(d.deadDepth+d.effDepth+d.freeboard);
+
+      if(d.shape==="rect"){
+        const r=calcRect(rawArea,d);
+        const rectL=roundUp025(r.L);
+        const rectW=roundUp025(r.W);
+        finalArea=rectL*rectW;
+        rect={L:rectL,W:rectW};
+        if(rect.L<1 || rect.W<1) warns.push("Rectangular dimensions are very small.");
+        if(rect.L>20 || rect.W>20) warns.push("Rectangular dimensions are very large.");
+      }else{
+        dia=roundUp025(Math.sqrt((4*rawArea)/Math.PI));
+        finalArea=Math.PI*dia*dia/4;
+        if(dia<1) warns.push("Circular diameter is very small.");
+        if(dia>15) warns.push("Circular diameter is very large.");
+      }
+
+      const totalVol=finalArea*totalDepthRounded;
+
       let estStarts=NaN;
       if(isFinite(tpSec) && isFinite(tfSec) && tpSec>0 && tfSec>0){
         estStarts=3600/(tpSec+tfSec);
       }
 
-      let rect=null,dia=NaN;
-      if(d.shape==="rect"){
-        rect=calcRect(area,d);
-        if(rect.L<1 || rect.W<1) warns.push("Rectangular dimensions are very small.");
-        if(rect.L>20 || rect.W>20) warns.push("Rectangular dimensions are very large.");
-      }else{
-        dia=Math.sqrt((4*area)/Math.PI);
-        if(dia<1) warns.push("Circular diameter is very small.");
-        if(dia>15) warns.push("Circular diameter is very large.");
-      }
-
-      if(area<1) warns.push("Required plan area is very small.");
-      if(area>100) warns.push("Required plan area is very large.");
-      if(totalDepth<1) warns.push("Total depth is shallow. Review controls and submergence.");
+      if(finalArea<1) warns.push("Required plan area is very small.");
+      if(finalArea>100) warns.push("Required plan area is very large.");
+      if(totalDepthRounded<1) warns.push("Total depth is shallow. Review controls and submergence.");
       if(d.stationType==="drywet") warns.push("Dry/wet sump selection affects equipment layout, but wet-side storage sizing remains based on sump hydraulics.");
 
       out.pumpRate.textContent=unit(QpumpLs,"L/s",3);
       out.totalQ.textContent=unit(QtotalLs,"L/s",3);
       out.active.textContent=unit(Vmin,"m³",3);
-      out.area.textContent=unit(area,"m²",3);
+      out.area.textContent=unit(finalArea,"m²",3);
       out.totalVol.textContent=unit(totalVol,"m³",3);
-      out.depth.textContent=unit(totalDepth,"m",3);
+      out.depth.textContent=unit(totalDepthRounded,"m",2);
       out.tmin.textContent=unit(TminSec/60,"min",3);
       out.tp.textContent=isFinite(tpSec)?unit(tpSec/60,"min",3):"Not defined";
       out.tf.textContent=isFinite(tfSec)?unit(tfSec/60,"min",3):"—";
       out.starts.textContent=isFinite(estStarts)?unit(estStarts,"starts/hr",2):"Not defined";
-      out.rect.textContent=rect?`L ${fmt(rect.L,3)} m × W ${fmt(rect.W,3)} m`:"—";
-      out.dia.textContent=isFinite(dia)?unit(dia,"m",3):"—";
+      out.rect.textContent=rect?`L ${fmt(rect.L,2)} m × W ${fmt(rect.W,2)} m`:"—";
+      out.dia.textContent=isFinite(dia)?unit(dia,"m",2):"—";
 
       const st=d.stationType==="wet"?"Wet well (submersible)":"Dry/wet sump (dry pumps)";
       const sh=d.shape==="rect"?"Rectangular":"Circular";
       const main=d.shape==="rect"
-        ? `L ${fmt(rect.L,3)} m × W ${fmt(rect.W,3)} m`
-        : `D ${fmt(dia,3)} m`;
+        ? `L ${fmt(rect.L,2)} m × W ${fmt(rect.W,2)} m`
+        : `D ${fmt(dia,2)} m`;
 
       $("summary").innerHTML=`
         <li><span>Station type</span><strong>${st}</strong></li>
@@ -606,6 +743,13 @@
         $("state").className="state ok";
         $("state").textContent="Calculation completed successfully.";
       }
+
+      drawSketch(d,{
+        rectL:rect?rect.L:NaN,
+        rectW:rect?rect.W:NaN,
+        dia:dia,
+        totalDepthRounded:totalDepthRounded
+      });
     }
 
     function loadExample(){
