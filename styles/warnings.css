@@ -1,0 +1,33 @@
+.status {
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-weight: 800;
+}
+
+.status--ok {
+  color: #155f39;
+  background: #edf9f2;
+  border: 1px solid #bfe6ce;
+}
+
+.status--warn {
+  color: #8c5a00;
+  background: #fff7e7;
+  border: 1px solid #efd8aa;
+}
+
+.status--error {
+  color: #922828;
+  background: #fff0f0;
+  border: 1px solid #ecc1c1;
+}
+
+.note-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  line-height: 1.75;
+}
+
+.note-list--plain {
+  color: var(--text-soft);
+}

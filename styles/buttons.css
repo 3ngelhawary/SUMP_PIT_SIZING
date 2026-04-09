@@ -1,0 +1,30 @@
+.btn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+  box-shadow: 0 10px 24px rgba(24,119,242,0.22);
+}
+
+.btn--secondary {
+  color: var(--primary-deep);
+  background: #eaf3ff;
+  border: 1px solid #cfe1fa;
+}
+
+.btn--ghost {
+  color: var(--text);
+  background: #f7fbff;
+  border: 1px solid var(--line);
+}

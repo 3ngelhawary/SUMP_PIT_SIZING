@@ -1,0 +1,67 @@
+.hero {
+  padding: 30px 28px;
+  border-radius: 30px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-lg);
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.10), transparent 44%),
+    linear-gradient(135deg, #0e5bc1 0%, #1877f2 42%, #00a6b4 100%);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -44px;
+  right: -44px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+
+.hero h1 {
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.hero p {
+  max-width: 920px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.92);
+  position: relative;
+}
+
+.hero__badge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.16);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+  position: relative;
+}
+
+.chip {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.14);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
